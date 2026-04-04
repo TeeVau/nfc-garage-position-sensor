@@ -1,83 +1,87 @@
+#ifndef ZIGBEE_MODE_ED
+#error "Zigbee end device mode is not selected in Tools->Zigbee mode"
+#endif
+
 #include <Arduino.h>
 #include <SPI.h>
-#include <WiFi.h>
+#include <cstring>
 #include <Adafruit_PN532.h>
 #include <NimBLEDevice.h>
-#include "secrets.h"
+#include "ZigbeeCore.h"
+#include "ep/ZigbeeWindowCovering.h"
+
+extern "C" {
+#include "esp_zigbee_core.h"
+#include "nwk/esp_zigbee_nwk.h"
+#include "zdo/esp_zigbee_zdo_common.h"
+}
 
 static constexpr const char* PROJECT_NAME = "nfc-garage-position-sensor";
-static constexpr const char* SOFTWARE_VERSION = "v0.1.0";
-char bleDeviceName[64] = {0};
+static constexpr const char* SOFTWARE_VERSION = "v0.2.0-zigbee";
+static constexpr const char* ZB_MFR = "TeeVau";
+static constexpr const char* ZB_MODEL = "nfc-garage-position-sensor";
+static constexpr uint32_t ZB_STATUS_INTERVAL_MS = 30000;
 
-// =========================
-// WLAN in secrets.h anpassen
-// =========================
-static constexpr uint32_t WIFI_LOG_INTERVAL_MS = 5000;
-uint32_t lastWifiLogMs = 0;
+static constexpr size_t BLE_NAME_LEN = 48;
+char bleDeviceName[BLE_NAME_LEN] = {0};
 
-// =========================
-// SPI-Pins an dein Board anpassen
-// =========================
-static constexpr uint8_t PIN_SPI_SCK  = 4;   // Platzhalter
-static constexpr uint8_t PIN_SPI_MISO = 5;   // Platzhalter
-static constexpr uint8_t PIN_SPI_MOSI = 6;   // Platzhalter
-static constexpr uint8_t PIN_PN532_SS = 7;   // Platzhalter
+// SPI
+static constexpr uint8_t PIN_SPI_SCK  = 20;
+static constexpr uint8_t PIN_SPI_MISO = 19;
+static constexpr uint8_t PIN_SPI_MOSI = 18;
+static constexpr uint8_t PIN_PN532_SS = 14;
 
-// =========================
-// NFC-Parameter
-// =========================
-static constexpr uint16_t NFC_TIMEOUT_MS = 50;   // kurze Blockierzeit
-static constexpr uint32_t LOOP_DELAY_MS  = 2;    // kleine Entlastung der CPU
-static constexpr uint32_t TAG_LOST_MS    = 120;  // nach Tagverlust wieder "neu" erkennbar
+// HW
+static constexpr uint8_t ZIGBEE_COVERING_ENDPOINT = 10;
+static constexpr uint8_t BUTTON_PIN = 9;
 
-// Richtungs-/Positionsstabilisierung
+// NFC
+static constexpr uint16_t NFC_TIMEOUT_MS = 50;
+static constexpr uint32_t LOOP_DELAY_MS  = 2;
+static constexpr uint32_t TAG_LOST_MS    = 50;
+static constexpr uint32_t STOP_DETECT_MS = 2000;
 static constexpr uint8_t  INDEX_CONFIRM_COUNT = 2;
-static constexpr uint32_t INDEX_CONFIRM_MS    = 80;
+static constexpr uint8_t  TAG_UID_LENGTH = 7;
 
-Adafruit_PN532 nfc(PIN_PN532_SS);
+//Adafruit_PN532 nfc(PIN_PN532_SS);
+Adafruit_PN532 nfc(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
+ZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
 
-// =========================
-// UID Liste (Reihenfolge = Position)
-// =========================
-static const char* TAGS[] = {
-  "04-29-CB-3E-D4-2A-81",
-  "04-61-C2-3E-D4-2A-81",
-  "04-AD-BC-3E-D4-2A-81",
-  "04-2D-B7-3E-D4-2A-81",
-  "04-DC-AE-3E-D4-2A-81",
-  "04-21-A7-3E-D4-2A-81",
-  "04-2F-A3-3E-D4-2A-81",
-  "04-11-9E-3E-D4-2A-81",
-  "04-96-9A-3E-D4-2A-81"
+static constexpr uint8_t TAGS[][TAG_UID_LENGTH] = {
+  {0x04, 0x29, 0xCB, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0x61, 0xC2, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0xAD, 0xBC, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0x2D, 0xB7, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0xDC, 0xAE, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0x21, 0xA7, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0x2F, 0xA3, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0x11, 0x9E, 0x3E, 0xD4, 0x2A, 0x81},
+  {0x04, 0x96, 0x9A, 0x3E, 0xD4, 0x2A, 0x81}
 };
 
 static constexpr size_t TAG_COUNT = sizeof(TAGS) / sizeof(TAGS[0]);
 
-// =========================
-// BLE NUS UUIDs
-// =========================
+// BLE NUS
 static NimBLEUUID NUS_SERVICE_UUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
-static NimBLEUUID NUS_RX_UUID     ("6E400002-B5A3-F393-E0A9-E50E24DCCA9E"); // iPhone -> ESP
-static NimBLEUUID NUS_TX_UUID     ("6E400003-B5A3-F393-E0A9-E50E24DCCA9E"); // ESP -> iPhone
+static NimBLEUUID NUS_TX_UUID     ("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
 
 NimBLEServer*         pServer           = nullptr;
 NimBLEService*        pService          = nullptr;
 NimBLECharacteristic* pTxCharacteristic = nullptr;
-NimBLECharacteristic* pRxCharacteristic = nullptr;
 
 bool bleClientConnected = false;
 
-// =========================
-// Status
-// =========================
-String lastSeenUid   = "";
+uint8_t lastSeenUid[TAG_UID_LENGTH] = {0};
+uint8_t lastSeenUidLength = 0;
 uint32_t lastSeenAtMs = 0;
-bool tagPresent = false;
 
-int stableIndex = -1;
-int candidateIndex = -1;
-uint8_t candidateCount = 0;
-uint32_t candidateFirstSeenMs = 0;
+int8_t stableIndex = -1;
+int8_t pendingIndex = -1;
+uint8_t pendingCount = 0;
+uint32_t lastIndexChangeMs = 0;
+
+uint8_t currentLiftPercentage = 100;
+uint32_t lastZigbeeStatusMs = 0;
 
 enum Direction : int8_t {
   DIR_UNKNOWN = 0,
@@ -88,108 +92,219 @@ enum Direction : int8_t {
 
 Direction direction = DIR_UNKNOWN;
 
-// =========================
-// Helper
-// =========================
-String wifiQuality(int rssi) {
-  if (rssi >= -60) return "sehr gut";
-  if (rssi >= -70) return "gut";
-  if (rssi >= -80) return "kritisch";
-  return "schlecht";
-}
+void fullOpen();
+void fullClose();
+void goToLiftPercentage(uint8_t liftPercentage);
+void stopMotor();
+void manualControl();
+void updateDetectedIndex(int8_t newIndex);
+void updateStoppedState(uint32_t now);
+void publishCurrentPosition(const char* source);
+void printZigbeeStatus();
 
-String uidToString(const uint8_t* uid, uint8_t uidLength) {
-  String out;
-  out.reserve(uidLength * 3);
-
-  for (uint8_t i = 0; i < uidLength; i++) {
-    if (i > 0) out += "-";
-    if (uid[i] < 0x10) out += "0";
-    out += String(uid[i], HEX);
-  }
-
-  out.toUpperCase();
-  return out;
-}
-
-int findIndex(const String& uid) {
-  for (size_t i = 0; i < TAG_COUNT; i++) {
-    if (uid.equals(TAGS[i])) {
-      return static_cast<int>(i);
-    }
-  }
-  return -1;
-}
-
-const char* directionToText(Direction dir) {
-  switch (dir) {
-    case DIR_OPENING: return "oeffnet";
-    case DIR_CLOSING: return "schliesst";
-    case DIR_STOPPED: return "steht";
-    default:          return "unbekannt";
-  }
-}
-
-uint8_t indexToPercent(int index) {
-  if (index < 0) return 0;
-  return static_cast<uint8_t>((index * 100) / (TAG_COUNT - 1));
-}
-
-void logLine(const String& msg) {
+void logLine(const char* msg) {
   Serial.println(msg);
 
   if (bleClientConnected && pTxCharacteristic != nullptr) {
-    pTxCharacteristic->setValue(msg.c_str());
+    pTxCharacteristic->setValue(msg);
     pTxCharacteristic->notify();
   }
 }
 
-void connectWifi() {
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-  Serial.print("[WIFI] Verbinde...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println();
-
-  logLine("[WIFI] Verbunden");
-  logLine("[WIFI] IP: " + WiFi.localIP().toString());
+bool sameUid(const uint8_t* uidA, uint8_t lenA, const uint8_t* uidB, uint8_t lenB) {
+  return lenA == lenB && memcmp(uidA, uidB, lenA) == 0;
 }
 
-// =========================
-// BLE Callbacks
-// =========================
+void copyUid(uint8_t* dst, uint8_t* dstLen, const uint8_t* src, uint8_t srcLen) {
+  *dstLen = srcLen;
+  memcpy(dst, src, srcLen);
+}
+
+void formatUid(const uint8_t* uid, uint8_t uidLength, char* out, size_t outSize) {
+  size_t pos = 0;
+  out[0] = '\0';
+
+  for (uint8_t i = 0; i < uidLength && pos + 3 < outSize; i++) {
+    int written = snprintf(out + pos, outSize - pos, (i == 0) ? "%02X" : "-%02X", uid[i]);
+    if (written <= 0) {
+      break;
+    }
+    pos += static_cast<size_t>(written);
+    if (pos >= outSize) {
+      break;
+    }
+  }
+}
+
+int8_t findIndex(const uint8_t* uid, uint8_t uidLength) {
+  if (uidLength != TAG_UID_LENGTH) {
+    return -1;
+  }
+
+  for (size_t i = 0; i < TAG_COUNT; i++) {
+    if (memcmp(uid, TAGS[i], TAG_UID_LENGTH) == 0) {
+      return static_cast<int8_t>(i);
+    }
+  }
+
+  return -1;
+}
+
+const char* dirCode(Direction dir) {
+  switch (dir) {
+    case DIR_OPENING: return "up";
+    case DIR_CLOSING: return "dn";
+    case DIR_STOPPED: return "stp";
+    default:          return "?";
+  }
+}
+
+uint8_t indexToPercent(int8_t index) {
+  if (index < 0 || TAG_COUNT <= 1) {
+    return 0;
+  }
+
+  return static_cast<uint8_t>((index * 100) / (TAG_COUNT - 1));
+}
+
+void publishCurrentPosition(const char* source) {
+  char msg[48];
+
+  currentLiftPercentage = stableIndex >= 0 ? indexToPercent(stableIndex) : 0;
+  zbCovering.setLiftPercentage(currentLiftPercentage);
+
+  snprintf(msg, sizeof(msg), "ZB pos %u %s", currentLiftPercentage, source);
+  logLine(msg);
+}
+
+void logTagState(const char* source) {
+  char msg[48];
+  snprintf(msg, sizeof(msg), "TAG %d %u %s %s", stableIndex, indexToPercent(stableIndex), dirCode(direction), source);
+  logLine(msg);
+}
+
+void logPendingState(int8_t index, uint8_t count) {
+  char msg[24];
+  snprintf(msg, sizeof(msg), "P %d %u", index, count);
+  logLine(msg);
+}
+
+const char* roleCode(esp_zb_nwk_device_type_t role) {
+  switch (role) {
+    case ESP_ZB_DEVICE_TYPE_COORDINATOR:
+      return "zc";
+    case ESP_ZB_DEVICE_TYPE_ROUTER:
+      return "zr";
+    case ESP_ZB_DEVICE_TYPE_ED:
+      return "zed";
+    default:
+      return "?";
+  }
+}
+
+void printIeeeLine(const char* label, const uint8_t* addr) {
+  char msg[64];
+  int len = snprintf(msg, sizeof(msg), "%s ", label);
+
+  for (int i = 7; i >= 0 && len > 0 && len < static_cast<int>(sizeof(msg) - 3); i--) {
+    len += snprintf(msg + len, sizeof(msg) - len, (i == 7) ? "%02X" : ":%02X", addr[i]);
+  }
+
+  logLine(msg);
+}
+
+void printNeighborTable() {
+  esp_zb_nwk_info_iterator_t it = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+  esp_zb_nwk_neighbor_info_t nbr;
+  bool found = false;
+  char msg[96];
+
+  logLine("ZB nbr");
+
+  while (esp_zb_nwk_get_next_neighbor(&it, &nbr) == ESP_OK) {
+    found = true;
+    snprintf(
+      msg,
+      sizeof(msg),
+      "N 0x%04X lqi=%u rssi=%d d=%u rel=%u rx=%u",
+      nbr.short_addr,
+      nbr.lqi,
+      nbr.rssi,
+      nbr.depth,
+      nbr.relationship,
+      nbr.rx_on_when_idle
+    );
+    logLine(msg);
+  }
+
+  if (!found) {
+    logLine("N none");
+  }
+}
+
+void printRouteTable() {
+  esp_zb_nwk_info_iterator_t it = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+  esp_zb_nwk_route_info_t route;
+  bool found = false;
+  char msg[64];
+
+  logLine("ZB route");
+
+  while (esp_zb_nwk_get_next_route(&it, &route) == ESP_OK) {
+    found = true;
+    snprintf(msg, sizeof(msg), "R dst=0x%04X via=0x%04X st=%u", route.dest_addr, route.next_hop_addr, route.flags.status);
+    logLine(msg);
+  }
+
+  if (!found) {
+    logLine("R none");
+  }
+}
+
+void printZigbeeStatus() {
+  char msg[64];
+  esp_zb_ieee_addr_t ieee = {0};
+  esp_zb_ieee_addr_t extPan = {0};
+
+  esp_zb_get_long_address(ieee);
+  esp_zb_get_extended_pan_id(extPan);
+
+  snprintf(
+    msg,
+    sizeof(msg),
+    "ZB st role=%s ch=%u pan=0x%04X short=0x%04X conn=%u",
+    roleCode(esp_zb_get_network_device_role()),
+    esp_zb_get_current_channel(),
+    esp_zb_get_pan_id(),
+    esp_zb_get_short_address(),
+    Zigbee.connected() ? 1 : 0
+  );
+  logLine(msg);
+
+  printIeeeLine("ZB ieee", ieee);
+  printIeeeLine("ZB xpan", extPan);
+  printNeighborTable();
+  printRouteTable();
+}
+
 class ServerCallbacks : public NimBLEServerCallbacks {
   void onConnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo) override {
     bleClientConnected = true;
-    Serial.println("[BLE] Client verbunden");
+    logLine("BLE conn");
   }
 
   void onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo, int reason) override {
     bleClientConnected = false;
-    Serial.println("[BLE] Client getrennt");
+    Serial.println("BLE disc");
     NimBLEDevice::startAdvertising();
   }
 };
 
-class RxCallbacks : public NimBLECharacteristicCallbacks {
-  void onWrite(NimBLECharacteristic* pCharacteristic, NimBLEConnInfo& connInfo) override {
-    std::string value = pCharacteristic->getValue();
-    if (!value.empty()) {
-      String rx = "[BLE RX] ";
-      for (char c : value) rx += c;
-      Serial.println(rx);
-    }
-  }
-};
 
 void setupBleUart() {
   snprintf(bleDeviceName, sizeof(bleDeviceName), "%s-%s", PROJECT_NAME, SOFTWARE_VERSION);
   NimBLEDevice::init(bleDeviceName);
-  NimBLEDevice::setPower(ESP_PWR_LVL_P9); // starke Sendeleistung, falls verfügbar
+  NimBLEDevice::setPower(ESP_PWR_LVL_P9);
 
   pServer = NimBLEDevice::createServer();
   pServer->setCallbacks(new ServerCallbacks());
@@ -202,79 +317,103 @@ void setupBleUart() {
   );
   pTxCharacteristic->createDescriptor("2902");
 
-  pRxCharacteristic = pService->createCharacteristic(
-    NUS_RX_UUID,
-    NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_NR
-  );
-  pRxCharacteristic->setCallbacks(new RxCallbacks());
-
-  pService->start();
-
   NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(NUS_SERVICE_UUID);
   pAdvertising->setName(bleDeviceName);
   pAdvertising->enableScanResponse(true);
   NimBLEDevice::startAdvertising();
 
-  Serial.println("[BLE] Advertising gestartet");
+  logLine("BLE adv");
 }
 
-// =========================
-// Stabile Positionslogik
-// =========================
-void processDetectedIndex(int newIndex) {
+void setupZigbee() {
+  char msg[48];
+
+  bool ok = zbCovering.setManufacturerAndModel(ZB_MFR, ZB_MODEL);
+  snprintf(msg, sizeof(msg), "ZB mm %u", ok ? 1 : 0);
+  logLine(msg);
+
+  zbCovering.setCoveringType(ROLLERSHADE);
+  zbCovering.setConfigStatus(true, true, false, true, true, false, false);
+  zbCovering.setMode(false, true, false, false);
+  zbCovering.setLimits(0, 100, 0, 0);
+
+  zbCovering.onOpen(fullOpen);
+  zbCovering.onClose(fullClose);
+  zbCovering.onGoToLiftPercentage(goToLiftPercentage);
+  zbCovering.onStop(stopMotor);
+
+  Zigbee.addEndpoint(&zbCovering);
+  logLine("ZB ep ok");
+
+  Zigbee.setDebugMode(true);
+  logLine("ZB dbg on");
+
+  if (!Zigbee.begin()) {
+    logLine("ERR zb begin");
+    delay(1000);
+    ESP.restart();
+  }
+
+  logLine("ZB join...");
+  while (!Zigbee.connected()) {
+    uint32_t now = millis();
+    if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
+      lastZigbeeStatusMs = now;
+      printZigbeeStatus();
+    }
+    delay(100);
+    Serial.print(".");
+  }
+  Serial.println();
+  logLine("ZB up");
+  printZigbeeStatus();
+
+  publishCurrentPosition("boot");
+}
+
+void updateDetectedIndex(int8_t newIndex) {
   uint32_t now = millis();
 
   if (stableIndex < 0) {
     stableIndex = newIndex;
+    pendingIndex = -1;
+    pendingCount = 0;
     direction = DIR_UNKNOWN;
-
-    logLine("[TAG] STABLE Index: " + String(stableIndex) +
-            " | " + String(indexToPercent(stableIndex)) + " % | " +
-            directionToText(direction));
+    lastIndexChangeMs = now;
+    logTagState("boot");
+    publishCurrentPosition("nfc0");
     return;
   }
 
-  // gleicher stabiler Index -> Kandidat zurücksetzen
   if (newIndex == stableIndex) {
-    candidateIndex = -1;
-    candidateCount = 0;
-    candidateFirstSeenMs = 0;
+    pendingIndex = -1;
+    pendingCount = 0;
     return;
   }
 
-  // Kandidat neu beginnen oder fortführen
-  if (newIndex != candidateIndex) {
-    candidateIndex = newIndex;
-    candidateCount = 1;
-    candidateFirstSeenMs = now;
-    return;
-  } else {
-    candidateCount++;
-  }
-
-  // Kandidat erst übernehmen, wenn ausreichend bestätigt
-  bool candidateConfirmed =
-      (candidateCount >= INDEX_CONFIRM_COUNT) ||
-      ((now - candidateFirstSeenMs) >= INDEX_CONFIRM_MS);
-
-  if (!candidateConfirmed) {
+  if (newIndex != pendingIndex) {
+    pendingIndex = newIndex;
+    pendingCount = 1;
+    // logPendingState(pendingIndex, pendingCount);
     return;
   }
 
-  int delta = candidateIndex - stableIndex;
+  if (pendingCount < 255) {
+    pendingCount++;
+  }
 
-  // Einzelschritt-Gegenimpulse bei aktiver Richtung ignorieren
-  if (direction == DIR_OPENING && delta == -1) {
+  // logPendingState(pendingIndex, pendingCount);
+
+  if (pendingCount < INDEX_CONFIRM_COUNT) {
     return;
   }
 
-  if (direction == DIR_CLOSING && delta == +1) {
-    return;
-  }
-
-  int oldStable = stableIndex;
-  stableIndex = candidateIndex;
+  int8_t oldStable = stableIndex;
+  stableIndex = newIndex;
+  pendingIndex = -1;
+  pendingCount = 0;
+  lastIndexChangeMs = now;
 
   if (stableIndex > oldStable) {
     direction = DIR_OPENING;
@@ -284,60 +423,135 @@ void processDetectedIndex(int newIndex) {
     direction = DIR_STOPPED;
   }
 
-  logLine("[TAG] STABLE Index: " + String(stableIndex) +
-          " | " + String(indexToPercent(stableIndex)) + " % | " +
-          directionToText(direction));
-
-  candidateIndex = -1;
-  candidateCount = 0;
-  candidateFirstSeenMs = 0;
+  logTagState("nfc");
+  publishCurrentPosition("nfc");
 }
 
-void logWifiStatus() {
-  if (WiFi.status() == WL_CONNECTED) {
-    int rssi = WiFi.RSSI();
-
-    logLine("[WIFI] RSSI: " + String(rssi) + " dBm | " + wifiQuality(rssi));
-  } else {
-    logLine("[WIFI] NICHT verbunden");
+void updateStoppedState(uint32_t now) {
+  if (stableIndex < 0) {
+    return;
   }
+
+  if (direction != DIR_OPENING && direction != DIR_CLOSING) {
+    return;
+  }
+
+  if ((now - lastIndexChangeMs) < STOP_DETECT_MS) {
+    return;
+  }
+
+  direction = DIR_STOPPED;
+  logTagState("hold");
+  publishCurrentPosition("hold");
 }
 
-// =========================
-// Setup
-// =========================
+void fullOpen() {
+  direction = DIR_OPENING;
+  stableIndex = static_cast<int8_t>(TAG_COUNT - 1);
+  lastIndexChangeMs = millis();
+  logLine("ZB cmd open");
+  publishCurrentPosition("open");
+}
+
+void fullClose() {
+  direction = DIR_CLOSING;
+  stableIndex = 0;
+  lastIndexChangeMs = millis();
+  logLine("ZB cmd close");
+  publishCurrentPosition("close");
+}
+
+void goToLiftPercentage(uint8_t liftPercentage) {
+  char msg[32];
+
+  currentLiftPercentage = liftPercentage;
+  stableIndex = static_cast<int8_t>((liftPercentage * (TAG_COUNT - 1)) / 100);
+  direction = DIR_STOPPED;
+  lastIndexChangeMs = millis();
+
+  snprintf(msg, sizeof(msg), "ZB cmd %u", liftPercentage);
+  logLine(msg);
+  publishCurrentPosition("goto");
+}
+
+void stopMotor() {
+  direction = DIR_STOPPED;
+  lastIndexChangeMs = millis();
+  logLine("ZB cmd stop");
+  publishCurrentPosition("stop");
+}
+
+void manualControl() {
+  char msg[32];
+
+  if (stableIndex < 0) {
+    stableIndex = 0;
+  } else {
+    stableIndex++;
+    if (stableIndex >= static_cast<int8_t>(TAG_COUNT)) {
+      stableIndex = 0;
+    }
+  }
+
+  direction = DIR_STOPPED;
+  lastIndexChangeMs = millis();
+  snprintf(msg, sizeof(msg), "BTN %u", indexToPercent(stableIndex));
+  logLine(msg);
+  publishCurrentPosition("btn");
+}
+
 void setup() {
+  char msg[48];
+
   Serial.begin(115200);
   delay(300);
 
+  snprintf(msg, sizeof(msg), "%s %s", PROJECT_NAME, SOFTWARE_VERSION);
   Serial.println();
-  Serial.println("==== " + String(PROJECT_NAME) + " ====");
-  Serial.println("Version: " + String(SOFTWARE_VERSION));
+  Serial.println(msg);
 
-  setupBleUart();
-  connectWifi();
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-  SPI.begin(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
-
+  //SPI.begin(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
   nfc.begin();
 
   uint32_t versiondata = nfc.getFirmwareVersion();
   if (!versiondata) {
-    logLine("[FEHLER] Kein PN532 gefunden");
-    while (true) delay(1000);
+    logLine("ERR pn532");
+    while (true) {
+      delay(1000);
+    }
   }
 
-  logLine("[OK] PN532 Firmware: 0x" + String(versiondata, HEX));
+  snprintf(msg, sizeof(msg), "PN532 0x%08lX", static_cast<unsigned long>(versiondata));
+  logLine(msg);
 
   nfc.SAMConfig();
-  logLine("[OK] Warte auf Tags...");
+  //nfc.setPassiveActivationRetries(0x05);
+  logLine("NFC wait");
+
+  setupZigbee();
+  setupBleUart();
 }
 
-// =========================
-// Loop
-// =========================
 void loop() {
-  uint8_t uid[7] = {0};
+  if (digitalRead(BUTTON_PIN) == LOW) {
+    delay(100);
+    uint32_t startTime = millis();
+
+    while (digitalRead(BUTTON_PIN) == LOW) {
+      delay(50);
+      if ((millis() - startTime) > 3000) {
+        logLine("ZB reset");
+        Zigbee.factoryReset();
+        delay(30000);
+      }
+    }
+
+    manualControl();
+  }
+
+  uint8_t uid[TAG_UID_LENGTH] = {0};
   uint8_t uidLength = 0;
 
   bool success = nfc.readPassiveTargetID(
@@ -348,37 +562,34 @@ void loop() {
   );
 
   if (success) {
-    String uidStr = uidToString(uid, uidLength);
     uint32_t now = millis();
+    int8_t index = findIndex(uid, uidLength);
 
-    // Nur neue UID weiterverarbeiten
-    if (!tagPresent || uidStr != lastSeenUid) {
-      int index = findIndex(uidStr);
-
-      if (index >= 0) {
-        processDetectedIndex(index);
-      } else {
-        logLine("[TAG] " + uidStr + " | unbekannt");
-      }
-
-      lastSeenUid = uidStr;
+    if (index >= 0) {
+      updateDetectedIndex(index);
+    } else if (!sameUid(uid, uidLength, lastSeenUid, lastSeenUidLength)) {
+        char uidText[3 * TAG_UID_LENGTH];
+        char msg[40];
+        formatUid(uid, uidLength, uidText, sizeof(uidText));
+        snprintf(msg, sizeof(msg), "TAG ? %s", uidText);
+        logLine(msg);
     }
 
-    tagPresent = true;
+    copyUid(lastSeenUid, &lastSeenUidLength, uid, uidLength);
     lastSeenAtMs = now;
+  } else if (lastSeenUidLength > 0 && (millis() - lastSeenAtMs > TAG_LOST_MS)) {
+    lastSeenUidLength = 0;
+  }
 
-  } else {
-    if (tagPresent && (millis() - lastSeenAtMs > TAG_LOST_MS)) {
-      tagPresent = false;
-      lastSeenUid = "";
+  updateStoppedState(millis());
+
+  if (Zigbee.started()) {
+    uint32_t now = millis();
+    if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
+      lastZigbeeStatusMs = now;
+      printZigbeeStatus();
     }
   }
 
   delay(LOOP_DELAY_MS);
-  uint32_t now = millis();
-
-if (now - lastWifiLogMs >= WIFI_LOG_INTERVAL_MS) {
-  lastWifiLogMs = now;
-  logWifiStatus();
-}
 }
