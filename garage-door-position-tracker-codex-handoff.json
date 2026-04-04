@@ -1,0 +1,266 @@
+{
+  "meta": {
+    "title": "garage-door-position-tracker-codex-handoff",
+    "version": "1.0.0",
+    "created_at": "2026-03-27T20:40:58Z",
+    "language": "de",
+    "authoring_context": "OpenAI ChatGPT handoff for continuation in Codex app",
+    "recommended_project_name": "garage-door-position-tracker",
+    "summary": "Handoff-Datei für die Weiterarbeit am Projekt zur Garagentor-Positionsbestimmung per NFC mit ESP. Enthält Bedarf, Konzept, Ist-Stand, technische Entscheidungen, bekannte Probleme, Lösungsansätze und nächste Schritte für Zigbee-fähige ESP-Hardware."
+  },
+  "project": {
+    "name": "garage-door-position-tracker",
+    "domain": "smart-home",
+    "goal": "Nicht-invasive Überwachung eines Lamellentors/Garagentors mit diskreten NFC-Markern zur Ableitung von Öffnungsgrad und Bewegungsrichtung, später als Zigbee-Gerät integrierbar.",
+    "status": "prototyping",
+    "current_phase": "NFC reader prototype on ESP32-C3 with BLE debug and Wi-Fi diagnostics; Zigbee integration planned next on Zigbee-capable ESP32"
+  },
+  "need": {
+    "problem_statement": "Das Garagentor soll zuverlässig überwacht werden, ohne Eingriff in den Antrieb oder dessen Steuerung. Für den sicherheitskritischen Zustand 'wirklich geschlossen' soll ein separater Homematic IP Sensor verwendet werden. Zusätzlich werden grobe bis mittlere Zwischenstände des Tors benötigt, um den Öffnungsgrad und die Bewegungsrichtung abzuleiten.",
+    "constraints": [
+      "Keine Änderungen an der Torsteuerung oder am elektrischen Antrieb",
+      "Lamellentor / Rolltor-artige Geometrie",
+      "Zwischenstände sollen erkannt werden",
+      "Closed-Status muss separat und besonders zuverlässig abgesichert sein",
+      "NFC soll als markerbasierte Positionslogik dienen, nicht als sicherheitskritischer Endlagensensor",
+      "Entwicklung zuerst auf vorhandener Hardware testen, danach auf Zigbee-fähige Hardware migrieren"
+    ],
+    "non_goals": [
+      "Keine Ansteuerung des Torantriebs",
+      "Keine sicherheitskritische Freigabe ausschließlich über NFC",
+      "Keine hochpräzise kontinuierliche Messung in Prozent mit Sub-Prozent-Auflösung"
+    ]
+  },
+  "concept": {
+    "core_idea": "Mehrere NFC-Tags werden in definierter Reihenfolge entlang der Torlamellen angebracht. Ein stationärer Reader liest die UID der vorbeifahrenden Tags. Die Reihenfolge der Tags entspricht der Position des Tors. Daraus werden Index, Öffnungsgrad und Bewegungsrichtung abgeleitet.",
+    "why_nfc": [
+      "Keine Verbindung zum Antrieb nötig",
+      "Tags sind preiswert und passiv",
+      "UID-only Ansatz ist robust und einfach",
+      "Mechanisch einfacher testbar als Wellenencoder in der frühen Phase"
+    ],
+    "important_architecture_decision": {
+      "safe_closed_state": "separat über Homematic IP Kontakt / Sensor",
+      "nfc_role": "diskrete Positionsmarker für Öffnungsgrad und Richtung",
+      "future_transport": "Zigbee on a Zigbee-capable ESP32 in later phase"
+    },
+    "tag_strategy": {
+      "principle": "UID-only mapping; Tag content is irrelevant",
+      "position_model": "array order defines logical position index",
+      "current_demo_count": 9,
+      "index_range": "0..8",
+      "percent_formula": "percent = index * 100 / (TAG_COUNT - 1)"
+    }
+  },
+  "hardware": {
+    "current_prototype": {
+      "mcu": "ESP32-C3",
+      "nfc_reader": "PN532",
+      "reader_interface": "SPI",
+      "wireless_debug": "BLE UART-like debug output via NimBLE using Nordic UART Service UUIDs",
+      "wifi": "enabled for RSSI diagnostics"
+    },
+    "next_target": {
+      "mcu": "ESP32 with Zigbee support (user now has the proper Zigbee-capable ESP32 module available)",
+      "intent": "migrate prototype logic to Zigbee-capable hardware as next development step"
+    },
+    "other_systems": {
+      "closed_status_sensor": "Homematic IP sensor/contact planned for secure closed verification",
+      "integration_targets": [
+        "Zigbee2MQTT",
+        "FHEM / MQTT potentially later depending on final architecture"
+      ]
+    }
+  },
+  "key_decisions": [
+    {
+      "topic": "Reader interface",
+      "decision": "SPI",
+      "reason": "best/schnellste Schnittstelle for this project; wiring complexity is acceptable"
+    },
+    {
+      "topic": "Tag interpretation",
+      "decision": "Use UID only",
+      "reason": "simpler and more robust than reading NDEF/text payload"
+    },
+    {
+      "topic": "Position model",
+      "decision": "Use array order as index",
+      "reason": "avoids redundant manual index maintenance"
+    },
+    {
+      "topic": "Percent representation",
+      "decision": "Use uint8_t, not float",
+      "reason": "0..100 integer is sufficient; simpler and better for embedded logic and later Zigbee/MQTT use"
+    },
+    {
+      "topic": "BLE stack",
+      "decision": "Use NimBLE-Arduino by h2zero",
+      "reason": "lighter and more suitable than the older BLE stack for ESP32-C3 prototype debugging"
+    }
+  ],
+  "current_uid_order": [
+    {
+      "uid": "04-29-CB-3E-D4-2A-81",
+      "logical_index": 0,
+      "approx_percent": 0
+    },
+    {
+      "uid": "04-61-C2-3E-D4-2A-81",
+      "logical_index": 1,
+      "approx_percent": 12
+    },
+    {
+      "uid": "04-AD-BC-3E-D4-2A-81",
+      "logical_index": 2,
+      "approx_percent": 25
+    },
+    {
+      "uid": "04-2D-B7-3E-D4-2A-81",
+      "logical_index": 3,
+      "approx_percent": 37
+    },
+    {
+      "uid": "04-DC-AE-3E-D4-2A-81",
+      "logical_index": 4,
+      "approx_percent": 50
+    },
+    {
+      "uid": "04-21-A7-3E-D4-2A-81",
+      "logical_index": 5,
+      "approx_percent": 62
+    },
+    {
+      "uid": "04-2F-A3-3E-D4-2A-81",
+      "logical_index": 6,
+      "approx_percent": 75
+    },
+    {
+      "uid": "04-11-9E-3E-D4-2A-81",
+      "logical_index": 7,
+      "approx_percent": 87
+    },
+    {
+      "uid": "04-96-9A-3E-D4-2A-81",
+      "logical_index": 8,
+      "approx_percent": 100
+    }
+  ],
+  "current_firmware_state": {
+    "features": [
+      "PN532 via SPI",
+      "UID reading with low timeout / high read rate",
+      "suppression of repeated log spam for same UID",
+      "Wi-Fi STA connection",
+      "BLE debug output via NimBLE",
+      "periodic Wi-Fi RSSI logging every 5 seconds",
+      "UID -> index lookup by array order",
+      "index -> percent calculation",
+      "direction derivation",
+      "state stabilization with candidate/stable index logic"
+    ],
+    "purpose": "Prototype and debug the sensor concept independent of Zigbee."
+  },
+  "observed_problem_and_solution": {
+    "problem": "At tag transition zones, especially between two neighboring tags, the reader alternates rapidly between both tags (e.g. index 0 and 1). Naive logic interpreted every single alternating read as a real direction change, causing false switching between 'oeffnet' and 'schliesst'.",
+    "evidence_summary": "Observed test sequence during opening: repeated 0 -> 1 -> 0 -> 1 oscillation within tens of milliseconds. This is physically implausible as actual repeated reverse motion and indicates reader overlap / transition bouncing.",
+    "solution": {
+      "name": "stableIndex + candidateIndex hysteresis / confirmation logic",
+      "details": [
+        "Do not treat every single read as a confirmed new position",
+        "Maintain stableIndex as confirmed position",
+        "Maintain candidateIndex, candidateCount and candidateFirstSeenMs",
+        "Only promote candidateIndex to stableIndex after repeated detection count and/or minimum time",
+        "Ignore single-step opposite-direction impulses when a direction is already active"
+      ],
+      "tunable_parameters": {
+        "INDEX_CONFIRM_COUNT": 2,
+        "INDEX_CONFIRM_MS": 80,
+        "TAG_LOST_MS": 120,
+        "NFC_TIMEOUT_MS": 10
+      }
+    }
+  },
+  "wifi_diagnostics": {
+    "enabled": true,
+    "interval_ms": 5000,
+    "reported_values": [
+      "WiFi.status()",
+      "WiFi.RSSI()",
+      "derived quality class: sehr gut / gut / kritisch / schlecht"
+    ],
+    "purpose": "Assess Wi-Fi reception quality in the garage during tests"
+  },
+  "ble_debug": {
+    "enabled": true,
+    "stack": "NimBLE-Arduino",
+    "pattern": "Nordic UART Service compatible BLE log output",
+    "device_name": "ESP32C3-NFC-Debug",
+    "service_uuid": "6E400001-B5A3-F393-E0A9-E50E24DCCA9E",
+    "rx_uuid": "6E400002-B5A3-F393-E0A9-E50E24DCCA9E",
+    "tx_uuid": "6E400003-B5A3-F393-E0A9-E50E24DCCA9E",
+    "intended_ios_apps": [
+      "nRF Connect",
+      "BLESerial nRF"
+    ],
+    "purpose": "mobile runtime debugging without notebook"
+  },
+  "implementation_notes": {
+    "coding_style_preferences": [
+      "clear embedded-style logic",
+      "avoid redundant state definitions",
+      "prefer integer state over float when sufficient",
+      "keep logs informative but not spammy"
+    ],
+    "important_runtime_behaviour": [
+      "same UID should not repeatedly spam log while tag remains present",
+      "same tag may be logged again after it has left the field long enough",
+      "direction should only change after stable confirmation",
+      "Wi-Fi diagnostics should not block NFC reading loop"
+    ]
+  },
+  "next_step_zigbee": {
+    "goal": "Port the validated NFC/index/direction logic from the ESP32-C3 prototype to the newly available Zigbee-capable ESP32 module.",
+    "expected_transport_role": "Expose opening percentage and direction to Zigbee2MQTT",
+    "recommended_approach": [
+      "Keep NFC/logic and transport abstraction separated",
+      "Retain stableIndex/candidateIndex logic unchanged",
+      "Replace or supplement current BLE/Wi-Fi debug transport with Zigbee state publishing",
+      "Model the device either as a generic sensor/cover position reporter or another Zigbee representation depending on desired exposes in Zigbee2MQTT",
+      "Preserve separate secure closed-state handling through Homematic IP or another independent reliable sensor"
+    ],
+    "open_questions_for_codex": [
+      "Which exact Zigbee-capable ESP32 module is now available (e.g. ESP32-C6, H2-based board, or other)?",
+      "Which framework should be used for Zigbee implementation: Arduino core Zigbee support vs ESP-IDF?",
+      "How should the device be modeled in Zigbee2MQTT: cover-like percentage, generic numeric sensor, or custom converter/exposes?"
+    ]
+  },
+  "suggested_repo_structure": {
+    "root": "garage-door-position-tracker",
+    "files": [
+      "README.md",
+      "docs/concept.md",
+      "docs/hardware.md",
+      "docs/tag-layout.md",
+      "firmware/prototype-esp32c3-nfc-debug/prototype-esp32c3-nfc-debug.ino",
+      "firmware/zigbee-esp32/ (planned next step)",
+      "data/uid-order.json"
+    ]
+  },
+  "codex_prompt_seed": {
+    "intent": "Continue this project in Codex. First preserve the validated prototype logic. Then prepare a Zigbee-capable implementation path using the newly available Zigbee-capable ESP32 board.",
+    "instructions": [
+      "Do not redesign the concept from scratch unless a hard technical blocker exists",
+      "Treat the current ESP32-C3 implementation as validated prototype baseline",
+      "Preserve UID order as the source of index truth",
+      "Preserve stableIndex/candidateIndex confirmation logic",
+      "Keep secure closed-state as a separate concern from NFC marker logic",
+      "When migrating to Zigbee, separate domain logic from transport/output layers",
+      "Propose only concrete, testable changes"
+    ]
+  },
+  "confidence": {
+    "overall": 95,
+    "notes": "High confidence for the documented prototype architecture and current solution path. Zigbee migration specifics depend on the exact newly available Zigbee-capable ESP32 board and chosen framework."
+  }
+}
