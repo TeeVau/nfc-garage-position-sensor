@@ -39,8 +39,8 @@ static constexpr uint8_t BUTTON_PIN = 9;
 static constexpr uint16_t NFC_TIMEOUT_MS = 50;
 static constexpr uint32_t LOOP_DELAY_MS  = 2;
 static constexpr uint32_t TAG_LOST_MS    = 50;
+static constexpr uint32_t STOP_DETECT_MS = 2000;
 static constexpr uint8_t  INDEX_CONFIRM_COUNT = 2;
-static constexpr uint32_t INDEX_CONFIRM_MS    = 80;
 static constexpr uint8_t  TAG_UID_LENGTH = 7;
 
 //Adafruit_PN532 nfc(PIN_PN532_SS);
@@ -74,12 +74,11 @@ bool bleClientConnected = false;
 uint8_t lastSeenUid[TAG_UID_LENGTH] = {0};
 uint8_t lastSeenUidLength = 0;
 uint32_t lastSeenAtMs = 0;
-bool tagPresent = false;
 
 int8_t stableIndex = -1;
-int8_t candidateIndex = -1;
-uint8_t candidateCount = 0;
-uint32_t candidateFirstSeenMs = 0;
+int8_t pendingIndex = -1;
+uint8_t pendingCount = 0;
+uint32_t lastIndexChangeMs = 0;
 
 uint8_t currentLiftPercentage = 100;
 uint32_t lastZigbeeStatusMs = 0;
@@ -98,6 +97,8 @@ void fullClose();
 void goToLiftPercentage(uint8_t liftPercentage);
 void stopMotor();
 void manualControl();
+void updateDetectedIndex(int8_t newIndex);
+void updateStoppedState(uint32_t now);
 void publishCurrentPosition(const char* source);
 void printZigbeeStatus();
 
@@ -173,6 +174,18 @@ void publishCurrentPosition(const char* source) {
   zbCovering.setLiftPercentage(currentLiftPercentage);
 
   snprintf(msg, sizeof(msg), "ZB pos %u %s", currentLiftPercentage, source);
+  logLine(msg);
+}
+
+void logTagState(const char* source) {
+  char msg[48];
+  snprintf(msg, sizeof(msg), "TAG %d %u %s %s", stableIndex, indexToPercent(stableIndex), dirCode(direction), source);
+  logLine(msg);
+}
+
+void logPendingState(int8_t index, uint8_t count) {
+  char msg[24];
+  snprintf(msg, sizeof(msg), "P %d %u", index, count);
   logLine(msg);
 }
 
@@ -359,56 +372,48 @@ void setupZigbee() {
   publishCurrentPosition("boot");
 }
 
-void processDetectedIndex(int8_t newIndex) {
-  char msg[48];
+void updateDetectedIndex(int8_t newIndex) {
   uint32_t now = millis();
 
   if (stableIndex < 0) {
     stableIndex = newIndex;
+    pendingIndex = -1;
+    pendingCount = 0;
     direction = DIR_UNKNOWN;
-
-    snprintf(msg, sizeof(msg), "TAG %d %u %s", stableIndex, indexToPercent(stableIndex), dirCode(direction));
-    logLine(msg);
+    lastIndexChangeMs = now;
+    logTagState("boot");
     publishCurrentPosition("nfc0");
     return;
   }
 
   if (newIndex == stableIndex) {
-    candidateIndex = -1;
-    candidateCount = 0;
-    candidateFirstSeenMs = 0;
+    pendingIndex = -1;
+    pendingCount = 0;
     return;
   }
 
-  if (newIndex != candidateIndex) {
-    candidateIndex = newIndex;
-    candidateCount = 1;
-    candidateFirstSeenMs = now;
+  if (newIndex != pendingIndex) {
+    pendingIndex = newIndex;
+    pendingCount = 1;
+    // logPendingState(pendingIndex, pendingCount);
     return;
   }
 
-  candidateCount++;
-
-  bool candidateConfirmed =
-      (candidateCount >= INDEX_CONFIRM_COUNT) ||
-      ((now - candidateFirstSeenMs) >= INDEX_CONFIRM_MS);
-
-  if (!candidateConfirmed) {
-    return;
+  if (pendingCount < 255) {
+    pendingCount++;
   }
 
-  int8_t delta = candidateIndex - stableIndex;
+  // logPendingState(pendingIndex, pendingCount);
 
-  if (direction == DIR_OPENING && delta == -1) {
-    return;
-  }
-
-  if (direction == DIR_CLOSING && delta == +1) {
+  if (pendingCount < INDEX_CONFIRM_COUNT) {
     return;
   }
 
   int8_t oldStable = stableIndex;
-  stableIndex = candidateIndex;
+  stableIndex = newIndex;
+  pendingIndex = -1;
+  pendingCount = 0;
+  lastIndexChangeMs = now;
 
   if (stableIndex > oldStable) {
     direction = DIR_OPENING;
@@ -418,18 +423,32 @@ void processDetectedIndex(int8_t newIndex) {
     direction = DIR_STOPPED;
   }
 
-  snprintf(msg, sizeof(msg), "TAG %d %u %s", stableIndex, indexToPercent(stableIndex), dirCode(direction));
-  logLine(msg);
+  logTagState("nfc");
   publishCurrentPosition("nfc");
+}
 
-  candidateIndex = -1;
-  candidateCount = 0;
-  candidateFirstSeenMs = 0;
+void updateStoppedState(uint32_t now) {
+  if (stableIndex < 0) {
+    return;
+  }
+
+  if (direction != DIR_OPENING && direction != DIR_CLOSING) {
+    return;
+  }
+
+  if ((now - lastIndexChangeMs) < STOP_DETECT_MS) {
+    return;
+  }
+
+  direction = DIR_STOPPED;
+  logTagState("hold");
+  publishCurrentPosition("hold");
 }
 
 void fullOpen() {
   direction = DIR_OPENING;
   stableIndex = static_cast<int8_t>(TAG_COUNT - 1);
+  lastIndexChangeMs = millis();
   logLine("ZB cmd open");
   publishCurrentPosition("open");
 }
@@ -437,6 +456,7 @@ void fullOpen() {
 void fullClose() {
   direction = DIR_CLOSING;
   stableIndex = 0;
+  lastIndexChangeMs = millis();
   logLine("ZB cmd close");
   publishCurrentPosition("close");
 }
@@ -447,6 +467,7 @@ void goToLiftPercentage(uint8_t liftPercentage) {
   currentLiftPercentage = liftPercentage;
   stableIndex = static_cast<int8_t>((liftPercentage * (TAG_COUNT - 1)) / 100);
   direction = DIR_STOPPED;
+  lastIndexChangeMs = millis();
 
   snprintf(msg, sizeof(msg), "ZB cmd %u", liftPercentage);
   logLine(msg);
@@ -455,6 +476,7 @@ void goToLiftPercentage(uint8_t liftPercentage) {
 
 void stopMotor() {
   direction = DIR_STOPPED;
+  lastIndexChangeMs = millis();
   logLine("ZB cmd stop");
   publishCurrentPosition("stop");
 }
@@ -472,6 +494,7 @@ void manualControl() {
   }
 
   direction = DIR_STOPPED;
+  lastIndexChangeMs = millis();
   snprintf(msg, sizeof(msg), "BTN %u", indexToPercent(stableIndex));
   logLine(msg);
   publishCurrentPosition("btn");
@@ -540,29 +563,25 @@ void loop() {
 
   if (success) {
     uint32_t now = millis();
+    int8_t index = findIndex(uid, uidLength);
 
-    if (!tagPresent || !sameUid(uid, uidLength, lastSeenUid, lastSeenUidLength)) {
-      int8_t index = findIndex(uid, uidLength);
-
-      if (index >= 0) {
-        processDetectedIndex(index);
-      } else {
+    if (index >= 0) {
+      updateDetectedIndex(index);
+    } else if (!sameUid(uid, uidLength, lastSeenUid, lastSeenUidLength)) {
         char uidText[3 * TAG_UID_LENGTH];
         char msg[40];
         formatUid(uid, uidLength, uidText, sizeof(uidText));
         snprintf(msg, sizeof(msg), "TAG ? %s", uidText);
         logLine(msg);
-      }
-
-      copyUid(lastSeenUid, &lastSeenUidLength, uid, uidLength);
     }
 
-    tagPresent = true;
+    copyUid(lastSeenUid, &lastSeenUidLength, uid, uidLength);
     lastSeenAtMs = now;
-  } else if (tagPresent && (millis() - lastSeenAtMs > TAG_LOST_MS)) {
-    tagPresent = false;
+  } else if (lastSeenUidLength > 0 && (millis() - lastSeenAtMs > TAG_LOST_MS)) {
     lastSeenUidLength = 0;
   }
+
+  updateStoppedState(millis());
 
   if (Zigbee.started()) {
     uint32_t now = millis();
