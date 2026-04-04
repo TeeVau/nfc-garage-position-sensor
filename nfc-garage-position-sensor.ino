@@ -43,7 +43,6 @@ static constexpr uint32_t STOP_DETECT_MS = 2000;
 static constexpr uint8_t  INDEX_CONFIRM_COUNT = 2;
 static constexpr uint8_t  TAG_UID_LENGTH = 7;
 
-//Adafruit_PN532 nfc(PIN_PN532_SS);
 Adafruit_PN532 nfc(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
 ZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
 
@@ -180,12 +179,6 @@ void publishCurrentPosition(const char* source) {
 void logTagState(const char* source) {
   char msg[48];
   snprintf(msg, sizeof(msg), "TAG %d %u %s %s", stableIndex, indexToPercent(stableIndex), dirCode(direction), source);
-  logLine(msg);
-}
-
-void logPendingState(int8_t index, uint8_t count) {
-  char msg[24];
-  snprintf(msg, sizeof(msg), "P %d %u", index, count);
   logLine(msg);
 }
 
@@ -395,15 +388,12 @@ void updateDetectedIndex(int8_t newIndex) {
   if (newIndex != pendingIndex) {
     pendingIndex = newIndex;
     pendingCount = 1;
-    // logPendingState(pendingIndex, pendingCount);
     return;
   }
 
   if (pendingCount < 255) {
     pendingCount++;
   }
-
-  // logPendingState(pendingIndex, pendingCount);
 
   if (pendingCount < INDEX_CONFIRM_COUNT) {
     return;
@@ -512,7 +502,6 @@ void setup() {
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
-  //SPI.begin(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
   nfc.begin();
 
   uint32_t versiondata = nfc.getFirmwareVersion();
@@ -527,7 +516,6 @@ void setup() {
   logLine(msg);
 
   nfc.SAMConfig();
-  //nfc.setPassiveActivationRetries(0x05);
   logLine("NFC wait");
 
   setupZigbee();
