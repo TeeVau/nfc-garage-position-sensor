@@ -1,4 +1,5 @@
 static NimBLEUUID NUS_SERVICE_UUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
+static NimBLEUUID NUS_RX_UUID("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");
 static NimBLEUUID NUS_TX_UUID("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
 
 void logLine(const char* msg) {
@@ -13,7 +14,7 @@ void logLine(const char* msg) {
 class ServerCallbacks : public NimBLEServerCallbacks {
   void onConnect(NimBLEServer* server, NimBLEConnInfo& connInfo) override {
     bleClientConnected = true;
-    logLine("BLE conn");
+    Serial.println("BLE conn");
   }
 
   void onDisconnect(NimBLEServer* server, NimBLEConnInfo& connInfo, int reason) override {
@@ -24,7 +25,7 @@ class ServerCallbacks : public NimBLEServerCallbacks {
 };
 
 void setupBleUart() {
-  snprintf(bleDeviceName, sizeof(bleDeviceName), "%s-%s", PROJECT_NAME, SOFTWARE_VERSION);
+  snprintf(bleDeviceName, sizeof(bleDeviceName), "garage-sensor");
   NimBLEDevice::init(bleDeviceName);
   NimBLEDevice::setPower(ESP_PWR_LVL_P9);
 
@@ -32,10 +33,15 @@ void setupBleUart() {
   pServer->setCallbacks(new ServerCallbacks());
 
   pService = pServer->createService(NUS_SERVICE_UUID);
+  pRxCharacteristic = pService->createCharacteristic(
+    NUS_RX_UUID,
+    NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_NR
+  );
   pTxCharacteristic = pService->createCharacteristic(
     NUS_TX_UUID,
     NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY
   );
+  pRxCharacteristic->setValue("");
   pTxCharacteristic->createDescriptor("2902");
 
   NimBLEAdvertising* advertising = NimBLEDevice::getAdvertising();
