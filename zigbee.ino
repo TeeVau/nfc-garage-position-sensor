@@ -116,7 +116,23 @@ void setupZigbee() {
   logLine(msg);
 
   zbCovering.setCoveringType(ROLLERSHADE);
-  zbCovering.setConfigStatus(true, true, false, true, true, false, false);
+  /*
+  operational - Operational status
+  online - Online status
+  commands_reversed - Commands reversed flag
+  lift_closed_loop - Lift closed loop flag
+  tilt_closed_loop - Tilt closed loop flag
+  lift_encoder_controlled - Lift encoder controlled flag
+  tilt_encoder_controlled - Tilt encoder controlled flag
+  */
+  zbCovering.setConfigStatus(true, true, false, true, false, false, false);
+  
+  /*
+  motor_reversed - Motor reversed flag
+  calibration_mode - Calibration mode flag
+  maintenance_mode - Maintenance mode flag
+  leds_on - LEDs on flag
+*/
   zbCovering.setMode(false, true, false, false);
   zbCovering.setLimits(0, 100, 0, 0);
 
