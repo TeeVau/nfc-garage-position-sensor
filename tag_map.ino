@@ -55,24 +55,6 @@ int8_t findIndex(const uint8_t* uid, uint8_t uidLength) {
   return -1;
 }
 
-const char* dirCode(Direction dir) {
-  switch (dir) {
-    case DIR_OPENING: return "opening";
-    case DIR_CLOSING: return "closing";
-    case DIR_STOPPED: return "stopped";
-    default: return "unknown";
-  }
-}
-
-uint16_t directionToZigbeeValue(Direction dir) {
-  switch (dir) {
-    case DIR_OPENING: return 1;
-    case DIR_CLOSING: return 2;
-    case DIR_STOPPED: return 3;
-    default: return 0;
-  }
-}
-
 uint8_t indexToPercent(int8_t index) {
   if (index < 0 || TAG_COUNT <= 1) {
     return 0;
