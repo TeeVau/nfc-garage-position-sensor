@@ -20,19 +20,40 @@ class ServerCallbacks : public NimBLEServerCallbacks {
   void onDisconnect(NimBLEServer* server, NimBLEConnInfo& connInfo, int reason) override {
     bleClientConnected = false;
     Serial.println("BLE disc");
-    NimBLEDevice::startAdvertising();
+
+    NimBLEAdvertising* advertising = NimBLEDevice::getAdvertising();
+    if (advertising == nullptr || !advertising->start()) {
+      Serial.println("ERR BLE adv restart");
+    }
   }
 };
 
 void setupBleUart() {
-  snprintf(bleDeviceName, sizeof(bleDeviceName), "garage-sensor");
-  NimBLEDevice::init(bleDeviceName);
-  NimBLEDevice::setPower(ESP_PWR_LVL_P9);
+  snprintf(bleDeviceName, sizeof(bleDeviceName), "%s", BLE_DEVICE_NAME);
+  if (!NimBLEDevice::init(bleDeviceName)) {
+    logLine("ERR BLE init");
+    return;
+  }
+
+  if (!NimBLEDevice::setDeviceName(bleDeviceName)) {
+    logLine("ERR BLE name");
+  }
+
+  NimBLEDevice::setPower(ESP_PWR_LVL_P20);  //P20 = +20dBm
 
   pServer = NimBLEDevice::createServer();
+  if (pServer == nullptr) {
+    logLine("ERR BLE srv");
+    return;
+  }
   pServer->setCallbacks(new ServerCallbacks());
 
   pService = pServer->createService(NUS_SERVICE_UUID);
+  if (pService == nullptr) {
+    logLine("ERR BLE svc");
+    return;
+  }
+
   pRxCharacteristic = pService->createCharacteristic(
     NUS_RX_UUID,
     NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_NR
@@ -41,14 +62,29 @@ void setupBleUart() {
     NUS_TX_UUID,
     NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY
   );
+  if (pRxCharacteristic == nullptr || pTxCharacteristic == nullptr) {
+    logLine("ERR BLE chr");
+    return;
+  }
+
   pRxCharacteristic->setValue("");
   pTxCharacteristic->createDescriptor("2902");
 
   NimBLEAdvertising* advertising = NimBLEDevice::getAdvertising();
+  if (advertising == nullptr) {
+    logLine("ERR BLE adv");
+    return;
+  }
+
   advertising->addServiceUUID(NUS_SERVICE_UUID);
-  advertising->setName(bleDeviceName);
+  if (!advertising->setName(bleDeviceName)) {
+    logLine("ERR BLE adv name");
+  }
   advertising->enableScanResponse(true);
-  NimBLEDevice::startAdvertising();
+  if (!advertising->start()) {
+    logLine("ERR BLE adv start");
+    return;
+  }
 
   logLine("BLE adv");
 }
