@@ -92,27 +92,43 @@ void printZigbeeStatus() {
   printRouteTable();
 }
 
+void publishCurrentDirection(const char* source) {
+  char msg[64];
+  uint16_t directionValue = directionToZigbeeValue(direction);
+
+  zbDirection.setMultistateInput(directionValue);
+
+  snprintf(msg, sizeof(msg), "ZB dir=%s code=%u %s", dirCode(direction), directionValue, source);
+  logLine(msg);
+}
+
 void publishCurrentPosition(const char* source) {
-  char msg[48];
+  char msg[64];
 
   if (stableIndex < 0) {
-    snprintf(msg, sizeof(msg), "ZB pos ? %s", source);
+    snprintf(msg, sizeof(msg), "ZB open=? lift=? %s", source);
     logLine(msg);
     return;
   }
 
-  currentLiftPercentage = indexToPercent(stableIndex);
-  zbCovering.setLiftPercentage(currentLiftPercentage);
+  currentOpeningPercentage = indexToPercent(stableIndex);
+  uint8_t zigbeeLiftPercent = openingPercentToZigbeeLiftPercent(currentOpeningPercentage);
+  zbCovering.setLiftPercentage(zigbeeLiftPercent);
 
-  snprintf(msg, sizeof(msg), "ZB pos %u %s", currentLiftPercentage, source);
+  snprintf(msg, sizeof(msg), "ZB open=%u lift=%u %s", currentOpeningPercentage, zigbeeLiftPercent, source);
   logLine(msg);
+  publishCurrentDirection(source);
 }
 
 void setupZigbee() {
-  char msg[48];
+  char msg[64];
 
   bool ok = zbCovering.setManufacturerAndModel(ZB_MFR, ZB_MODEL);
   snprintf(msg, sizeof(msg), "ZB mm %u", ok ? 1 : 0);
+  logLine(msg);
+
+  ok = zbDirection.setManufacturerAndModel(ZB_MFR, ZB_MODEL);
+  snprintf(msg, sizeof(msg), "ZB mm dir %u", ok ? 1 : 0);
   logLine(msg);
 
   zbCovering.setCoveringType(ROLLERSHADE);
@@ -132,12 +148,26 @@ void setupZigbee() {
   calibration_mode - Calibration mode flag
   maintenance_mode - Maintenance mode flag
   leds_on - LEDs on flag
-*/
+  */
   zbCovering.setMode(false, true, false, false);
   zbCovering.setLimits(0, 100, 0, 0);
 
+  ok = zbDirection.addMultistateInput();
+  snprintf(msg, sizeof(msg), "ZB dir in %u", ok ? 1 : 0);
+  logLine(msg);
+
+  ok = zbDirection.setMultistateInputDescription("Door direction");
+  snprintf(msg, sizeof(msg), "ZB dir desc %u", ok ? 1 : 0);
+  logLine(msg);
+
+  ok = zbDirection.setMultistateInputStates(4);
+  snprintf(msg, sizeof(msg), "ZB dir states %u", ok ? 1 : 0);
+  logLine(msg);
+
   Zigbee.addEndpoint(&zbCovering);
   logLine("ZB ep ok");
+  Zigbee.addEndpoint(&zbDirection);
+  logLine("ZB dir ep ok");
 
   Zigbee.setDebugMode(true);
   logLine("ZB dbg on");

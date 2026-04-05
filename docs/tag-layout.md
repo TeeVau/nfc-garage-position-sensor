@@ -5,7 +5,8 @@ The order of the UID table is the source of truth for the logical door position.
 ## Mapping
 
 ```text
-percent = index * 100 / (TAG_COUNT - 1)
+raw_percent = index * 100 / (TAG_COUNT - 1)
+percent = INDEX_INCREASES_WHEN_OPENING ? raw_percent : (100 - raw_percent)
 ```
 
 Current UID order:
@@ -21,6 +22,15 @@ Current UID order:
 7  -> 04-11-9E-3E-D4-2A-81 ->  87 %
 8  -> 04-96-9A-3E-D4-2A-81 -> 100 %
 ```
+
+This reflects the current firmware setting `INDEX_INCREASES_WHEN_OPENING = true`, i.e. the UID table is ordered from closed to open and the reported cover percentage follows the SDK/Zigbee2MQTT convention directly: `0 = closed`, `100 = open`.
+
+That means:
+
+- the tag labeled `0 %` must represent the closed position
+- the tag labeled `100 %` must represent the fully open position
+
+When publishing to the Zigbee Window Covering endpoint, this opening percentage is converted to the cluster-facing lift percentage so that external consumers such as Zigbee2MQTT still receive `0 = closed` and `100 = open`.
 
 ## Runtime Logic
 
