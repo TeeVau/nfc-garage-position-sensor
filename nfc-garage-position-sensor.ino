@@ -17,7 +17,7 @@ extern "C" {
 }
 
 static constexpr const char* PROJECT_NAME = "nfc-garage-position-sensor";
-static constexpr const char* SOFTWARE_VERSION = "v0.2.0-zigbee";
+static constexpr const char* SOFTWARE_VERSION = "v0.2.1";
 static constexpr const char* ZB_MFR = "TeeVau";
 static constexpr const char* ZB_MODEL = "nfc-garage-position-sensor";
 static constexpr uint32_t ZB_STATUS_INTERVAL_MS = 30000;
@@ -42,6 +42,7 @@ static constexpr uint32_t TAG_LOST_MS    = 50;
 static constexpr uint32_t STOP_DETECT_MS = 2000;
 static constexpr uint8_t  INDEX_CONFIRM_COUNT = 2;
 static constexpr uint8_t  TAG_UID_LENGTH = 7;
+static constexpr uint8_t  MAX_UID_LENGTH = 10;
 
 Adafruit_PN532 nfc(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
 ZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
@@ -70,7 +71,7 @@ NimBLECharacteristic* pTxCharacteristic = nullptr;
 
 bool bleClientConnected = false;
 
-uint8_t lastSeenUid[TAG_UID_LENGTH] = {0};
+uint8_t lastSeenUid[MAX_UID_LENGTH] = {0};
 uint8_t lastSeenUidLength = 0;
 uint32_t lastSeenAtMs = 0;
 
@@ -78,6 +79,7 @@ int8_t stableIndex = -1;
 int8_t pendingIndex = -1;
 uint8_t pendingCount = 0;
 uint32_t lastIndexChangeMs = 0;
+bool zigbeeReady = false;
 
 uint8_t currentLiftPercentage = 100;
 uint32_t lastZigbeeStatusMs = 0;
@@ -95,7 +97,7 @@ void fullOpen();
 void fullClose();
 void goToLiftPercentage(uint8_t liftPercentage);
 void stopMotor();
-void manualControl();
+void handleShortButtonPress();
 void updateDetectedIndex(int8_t newIndex);
 void updateStoppedState(uint32_t now);
 void publishCurrentPosition(const char* source);
@@ -115,8 +117,13 @@ bool sameUid(const uint8_t* uidA, uint8_t lenA, const uint8_t* uidB, uint8_t len
 }
 
 void copyUid(uint8_t* dst, uint8_t* dstLen, const uint8_t* src, uint8_t srcLen) {
-  *dstLen = srcLen;
-  memcpy(dst, src, srcLen);
+  uint8_t copyLen = srcLen;
+  if (copyLen > MAX_UID_LENGTH) {
+    copyLen = MAX_UID_LENGTH;
+  }
+
+  *dstLen = copyLen;
+  memcpy(dst, src, copyLen);
 }
 
 void formatUid(const uint8_t* uid, uint8_t uidLength, char* out, size_t outSize) {
@@ -169,7 +176,13 @@ uint8_t indexToPercent(int8_t index) {
 void publishCurrentPosition(const char* source) {
   char msg[48];
 
-  currentLiftPercentage = stableIndex >= 0 ? indexToPercent(stableIndex) : 0;
+  if (stableIndex < 0) {
+    snprintf(msg, sizeof(msg), "ZB pos ? %s", source);
+    logLine(msg);
+    return;
+  }
+
+  currentLiftPercentage = indexToPercent(stableIndex);
   zbCovering.setLiftPercentage(currentLiftPercentage);
 
   snprintf(msg, sizeof(msg), "ZB pos %u %s", currentLiftPercentage, source);
@@ -331,11 +344,6 @@ void setupZigbee() {
   zbCovering.setMode(false, true, false, false);
   zbCovering.setLimits(0, 100, 0, 0);
 
-  zbCovering.onOpen(fullOpen);
-  zbCovering.onClose(fullClose);
-  zbCovering.onGoToLiftPercentage(goToLiftPercentage);
-  zbCovering.onStop(stopMotor);
-
   Zigbee.addEndpoint(&zbCovering);
   logLine("ZB ep ok");
 
@@ -350,19 +358,10 @@ void setupZigbee() {
 
   logLine("ZB join...");
   while (!Zigbee.connected()) {
-    uint32_t now = millis();
-    if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
-      lastZigbeeStatusMs = now;
-      printZigbeeStatus();
-    }
-    delay(100);
     Serial.print(".");
+    delay(100);
   }
   Serial.println();
-  logLine("ZB up");
-  printZigbeeStatus();
-
-  publishCurrentPosition("boot");
 }
 
 void updateDetectedIndex(int8_t newIndex) {
@@ -471,23 +470,9 @@ void stopMotor() {
   publishCurrentPosition("stop");
 }
 
-void manualControl() {
-  char msg[32];
-
-  if (stableIndex < 0) {
-    stableIndex = 0;
-  } else {
-    stableIndex++;
-    if (stableIndex >= static_cast<int8_t>(TAG_COUNT)) {
-      stableIndex = 0;
-    }
-  }
-
-  direction = DIR_STOPPED;
-  lastIndexChangeMs = millis();
-  snprintf(msg, sizeof(msg), "BTN %u", indexToPercent(stableIndex));
-  logLine(msg);
-  publishCurrentPosition("btn");
+void handleShortButtonPress() {
+  logLine("BTN short");
+  printZigbeeStatus();
 }
 
 void setup() {
@@ -526,20 +511,25 @@ void loop() {
   if (digitalRead(BUTTON_PIN) == LOW) {
     delay(100);
     uint32_t startTime = millis();
+    bool factoryResetTriggered = false;
 
     while (digitalRead(BUTTON_PIN) == LOW) {
       delay(50);
       if ((millis() - startTime) > 3000) {
         logLine("ZB reset");
         Zigbee.factoryReset();
+        factoryResetTriggered = true;
         delay(30000);
+        break;
       }
     }
 
-    manualControl();
+    if (!factoryResetTriggered) {
+      handleShortButtonPress();
+    }
   }
 
-  uint8_t uid[TAG_UID_LENGTH] = {0};
+  uint8_t uid[MAX_UID_LENGTH] = {0};
   uint8_t uidLength = 0;
 
   bool success = nfc.readPassiveTargetID(
@@ -556,7 +546,7 @@ void loop() {
     if (index >= 0) {
       updateDetectedIndex(index);
     } else if (!sameUid(uid, uidLength, lastSeenUid, lastSeenUidLength)) {
-        char uidText[3 * TAG_UID_LENGTH];
+        char uidText[3 * MAX_UID_LENGTH];
         char msg[40];
         formatUid(uid, uidLength, uidText, sizeof(uidText));
         snprintf(msg, sizeof(msg), "TAG ? %s", uidText);
@@ -573,9 +563,24 @@ void loop() {
 
   if (Zigbee.started()) {
     uint32_t now = millis();
+    bool connected = Zigbee.connected();
+
+    if (connected && !zigbeeReady) {
+      zigbeeReady = true;
+      Serial.println();
+      logLine("ZB up");
+      printZigbeeStatus();
+      publishCurrentPosition("boot");
+    } else if (!connected && zigbeeReady) {
+      zigbeeReady = false;
+      logLine("ZB down");
+    }
+
     if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
       lastZigbeeStatusMs = now;
       printZigbeeStatus();
+    } else if (!connected) {
+      Serial.print(".");
     }
   }
 
