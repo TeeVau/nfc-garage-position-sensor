@@ -9,6 +9,7 @@ The firmware reads NFC tag UIDs, maps them to a logical door position, derives m
 - MCU: `ESP32-C6`
 - NFC reader: `PN532` via SPI
 - Zigbee: `ZigbeeWindowCovering`
+- Zigbee direction endpoint: `ZigbeeMultistate`
 - Debug: serial + BLE notifications
 - Position model: fixed UID order mapped to `0..100 %`
 
@@ -28,6 +29,7 @@ The current tag transition logic confirms a newly seen tag with `pendingIndex` a
 - [flash-clean.ps1](./flash-clean.ps1): full erase upload for a fresh Zigbee join
 - [monitor.ps1](./monitor.ps1): serial monitor with reconnect handling
 - [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
+- [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup including external converter for direction
 - [docs/garage-door-position-tracker-codex-handoff.json](./docs/garage-door-position-tracker-codex-handoff.json): earlier project handoff notes
 - [examples/Zigbee_Window_Covering](./examples/Zigbee_Window_Covering): reference example kept for comparison
 
@@ -65,8 +67,29 @@ On this machine, Arduino IDE compile times can be around 10 minutes.
 ## Zigbee Behavior
 
 - The device joins as Zigbee end device.
-- Position is published as lift percentage.
+- Position is published as lift percentage with cover semantics: `0 = closed`, `100 = open`.
+- Direction is published on a separate Zigbee multistate endpoint.
 - Direction is derived from confirmed index changes.
 - If no confirmed movement happens for `STOP_DETECT_MS`, the state changes to `stopped`.
+
+`INDEX_INCREASES_WHEN_OPENING` in [config.h](./config.h) defines how the UID table maps to Zigbee cover semantics.
+
+We keep the firmware aligned with the SDK and Zigbee2MQTT semantics:
+
+- `0 %` opening = `CLOSE`
+- `100 %` opening = `OPEN`
+- the tag labeled `0 %` represents a closed door
+- the tag labeled `100 %` represents a fully open door
+
+With the current setting `true`, index `0` maps to `0 % / CLOSE` and the last index maps to `100 % / OPEN`, matching a UID table that runs from closed to open.
+
+Before sending the value into `ZigbeeWindowCovering`, the firmware converts the opening percentage to the Zigbee Window Covering lift percentage used by the cluster in practice. This keeps our project semantics stable even though the cluster-facing value is inverted.
+
+For Zigbee2MQTT this means `invert_cover` should normally stay `false`. If Zigbee2MQTT still shows the opposite direction, check that device option there as well.
+
+To expose direction in Zigbee2MQTT, use the external converter in [docs/zigbee2mqtt-external-converter.js](./docs/zigbee2mqtt-external-converter.js). It adds:
+
+- `direction = unknown | opening | closing | stopped`
+- `direction_code = 0 | 1 | 2 | 3`
 
 `flash.ps1` keeps existing Zigbee pairing. Use `flash-clean.ps1` only when you explicitly want a clean re-pair.
