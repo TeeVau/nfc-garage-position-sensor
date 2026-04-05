@@ -17,6 +17,12 @@ The current tag transition logic confirms a newly seen tag with `pendingIndex` a
 ## Repository Layout
 
 - [nfc-garage-position-sensor.ino](./nfc-garage-position-sensor.ino): current firmware
+- [config.h](./config.h): project constants and shared configuration
+- [tag_map.ino](./tag_map.ino): NFC tag table and UID helper functions
+- [nfc_logic.ino](./nfc_logic.ino): PN532 handling and position state machine
+- [zigbee.ino](./zigbee.ino): Zigbee setup, status, and publishing
+- [ble_debug.ino](./ble_debug.ino): BLE UART debug output
+- [button.ino](./button.ino): local button handling
 - [build.ps1](./build.ps1): compile helper
 - [flash.ps1](./flash.ps1): normal upload, keeps Zigbee pairing
 - [flash-clean.ps1](./flash-clean.ps1): full erase upload for a fresh Zigbee join
