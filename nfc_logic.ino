@@ -65,9 +65,9 @@ void updateDetectedIndex(int8_t newIndex) {
   lastIndexChangeMs = now;
 
   if (stableIndex > oldStable) {
-    direction = DIR_OPENING;
+    direction = INDEX_INCREASES_WHEN_OPENING ? DIR_OPENING : DIR_CLOSING;
   } else if (stableIndex < oldStable) {
-    direction = DIR_CLOSING;
+    direction = INDEX_INCREASES_WHEN_OPENING ? DIR_CLOSING : DIR_OPENING;
   } else {
     direction = DIR_STOPPED;
   }
