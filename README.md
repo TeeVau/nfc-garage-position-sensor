@@ -16,14 +16,14 @@ The current tag transition logic confirms a newly seen tag with `pendingIndex` a
 
 ## Repository Layout
 
-- [nfc-garage-position-sensor.ino](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/nfc-garage-position-sensor.ino): current firmware
-- [build.ps1](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/build.ps1): compile helper
-- [flash.ps1](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/flash.ps1): normal upload, keeps Zigbee pairing
-- [flash-clean.ps1](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/flash-clean.ps1): full erase upload for a fresh Zigbee join
-- [monitor.ps1](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/monitor.ps1): serial monitor with reconnect handling
-- [docs/tag-layout.md](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/docs/tag-layout.md): UID order and percent mapping
-- [docs/garage-door-position-tracker-codex-handoff.json](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/docs/garage-door-position-tracker-codex-handoff.json): earlier project handoff notes
-- [examples/Zigbee_Window_Covering](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/examples/Zigbee_Window_Covering): reference example kept for comparison
+- [nfc-garage-position-sensor.ino](./nfc-garage-position-sensor.ino): current firmware
+- [build.ps1](./build.ps1): compile helper
+- [flash.ps1](./flash.ps1): normal upload, keeps Zigbee pairing
+- [flash-clean.ps1](./flash-clean.ps1): full erase upload for a fresh Zigbee join
+- [monitor.ps1](./monitor.ps1): serial monitor with reconnect handling
+- [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
+- [docs/garage-door-position-tracker-codex-handoff.json](./docs/garage-door-position-tracker-codex-handoff.json): earlier project handoff notes
+- [examples/Zigbee_Window_Covering](./examples/Zigbee_Window_Covering): reference example kept for comparison
 
 ## Build And Flash
 
@@ -64,7 +64,3 @@ On this machine, Arduino IDE compile times can be around 10 minutes.
 - If no confirmed movement happens for `STOP_DETECT_MS`, the state changes to `stopped`.
 
 `flash.ps1` keeps existing Zigbee pairing. Use `flash-clean.ps1` only when you explicitly want a clean re-pair.
-
-## Security Note
-
-[secrets.h](/C:/Users/TobiasVaupel/OneDrive%20-%20622mbit.de/MeineProjekte/nfc-garage-position-sensor/secrets.h) is intentionally ignored and must not be committed.
