@@ -24,6 +24,7 @@ char bleDeviceName[BLE_NAME_LEN] = {0};
 
 NimBLEServer* pServer = nullptr;
 NimBLEService* pService = nullptr;
+NimBLECharacteristic* pRxCharacteristic = nullptr;
 NimBLECharacteristic* pTxCharacteristic = nullptr;
 
 bool bleClientConnected = false;
