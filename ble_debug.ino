@@ -1,3 +1,4 @@
+#if BLE_DEBUG_ENABLED
 static NimBLEUUID NUS_SERVICE_UUID("6E400001-B5A3-F393-E0A9-E50E24DCCA9E");
 static NimBLEUUID NUS_RX_UUID("6E400002-B5A3-F393-E0A9-E50E24DCCA9E");
 static NimBLEUUID NUS_TX_UUID("6E400003-B5A3-F393-E0A9-E50E24DCCA9E");
@@ -39,7 +40,7 @@ void setupBleUart() {
     logLine("ERR BLE name");
   }
 
-  NimBLEDevice::setPower(ESP_PWR_LVL_P20);  //P20 = +20dBm
+  NimBLEDevice::setPower(ESP_PWR_LVL_P20);
 
   pServer = NimBLEDevice::createServer();
   if (pServer == nullptr) {
@@ -88,3 +89,12 @@ void setupBleUart() {
 
   logLine("BLE adv");
 }
+#else
+void logLine(const char* msg) {
+  Serial.println(msg);
+}
+
+void setupBleUart() {
+  logLine("BLE off");
+}
+#endif

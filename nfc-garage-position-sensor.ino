@@ -6,9 +6,10 @@
 #include <SPI.h>
 #include <cstring>
 #include <Adafruit_PN532.h>
+#if BLE_DEBUG_ENABLED
 #include <NimBLEDevice.h>
+#endif
 #include "ZigbeeCore.h"
-#include "ep/ZigbeeMultistate.h"
 #include "ep/ZigbeeWindowCovering.h"
 #include "config.h"
 
@@ -20,8 +21,8 @@ extern "C" {
 
 Adafruit_PN532 nfc(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
 ZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
-ZigbeeMultistate zbDirection(ZIGBEE_DIRECTION_ENDPOINT);
 
+#if BLE_DEBUG_ENABLED
 char bleDeviceName[BLE_NAME_LEN] = {0};
 
 NimBLEServer* pServer = nullptr;
@@ -30,6 +31,7 @@ NimBLECharacteristic* pRxCharacteristic = nullptr;
 NimBLECharacteristic* pTxCharacteristic = nullptr;
 
 bool bleClientConnected = false;
+#endif
 bool zigbeeReady = false;
 
 uint8_t lastSeenUid[MAX_UID_LENGTH] = {0};
@@ -39,11 +41,9 @@ uint32_t lastSeenAtMs = 0;
 int8_t stableIndex = -1;
 int8_t pendingIndex = -1;
 uint8_t pendingCount = 0;
-uint32_t lastIndexChangeMs = 0;
 
 uint8_t currentOpeningPercentage = 100;
 uint32_t lastZigbeeStatusMs = 0;
-Direction direction = DIR_UNKNOWN;
 
 void setupNfc();
 void pollNfc();

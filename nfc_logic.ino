@@ -1,6 +1,6 @@
 void logTagState(const char* source) {
   char msg[48];
-  snprintf(msg, sizeof(msg), "TAG %d %u %s %s", stableIndex, indexToPercent(stableIndex), dirCode(direction), source);
+  snprintf(msg, sizeof(msg), "TAG %d %u %s", stableIndex, indexToPercent(stableIndex), source);
   logLine(msg);
 }
 
@@ -31,8 +31,6 @@ void updateDetectedIndex(int8_t newIndex) {
     stableIndex = newIndex;
     pendingIndex = -1;
     pendingCount = 0;
-    direction = DIR_UNKNOWN;
-    lastIndexChangeMs = now;
     logTagState("boot");
     publishCurrentPosition("nfc0");
     return;
@@ -58,40 +56,12 @@ void updateDetectedIndex(int8_t newIndex) {
     return;
   }
 
-  int8_t oldStable = stableIndex;
   stableIndex = newIndex;
   pendingIndex = -1;
   pendingCount = 0;
-  lastIndexChangeMs = now;
-
-  if (stableIndex > oldStable) {
-    direction = INDEX_INCREASES_WHEN_OPENING ? DIR_OPENING : DIR_CLOSING;
-  } else if (stableIndex < oldStable) {
-    direction = INDEX_INCREASES_WHEN_OPENING ? DIR_CLOSING : DIR_OPENING;
-  } else {
-    direction = DIR_STOPPED;
-  }
 
   logTagState("nfc");
   publishCurrentPosition("nfc");
-}
-
-void updateStoppedState(uint32_t now) {
-  if (stableIndex < 0) {
-    return;
-  }
-
-  if (direction != DIR_OPENING && direction != DIR_CLOSING) {
-    return;
-  }
-
-  if ((now - lastIndexChangeMs) < STOP_DETECT_MS) {
-    return;
-  }
-
-  direction = DIR_STOPPED;
-  logTagState("hold");
-  publishCurrentPosition("hold");
 }
 
 void pollNfc() {
@@ -124,6 +94,4 @@ void pollNfc() {
   } else if (lastSeenUidLength > 0 && (millis() - lastSeenAtMs > TAG_LOST_MS)) {
     lastSeenUidLength = 0;
   }
-
-  updateStoppedState(millis());
 }
