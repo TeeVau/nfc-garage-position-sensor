@@ -1,3 +1,37 @@
+static constexpr uint16_t ZB_BASIC_SW_BUILD_ID_ATTR = 0x4000;
+
+bool GarageZigbeeWindowCovering::setSoftwareBuildId(const char* buildId) {
+  if (buildId == nullptr) {
+    return false;
+  }
+
+  size_t buildIdLength = strlen(buildId);
+  if (buildIdLength > ZB_MAX_NAME_LENGTH) {
+    log_e("Software build ID is too long");
+    return false;
+  }
+
+  char zbBuildId[ZB_MAX_NAME_LENGTH + 2];
+  zbBuildId[0] = static_cast<char>(buildIdLength);
+  memcpy(zbBuildId + 1, buildId, buildIdLength);
+  zbBuildId[buildIdLength + 1] = '\0';
+
+  esp_zb_attribute_list_t* basicCluster =
+    esp_zb_cluster_list_get_cluster(_cluster_list, ESP_ZB_ZCL_CLUSTER_ID_BASIC, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+  if (basicCluster == nullptr) {
+    log_e("Failed to get basic cluster for software build ID");
+    return false;
+  }
+
+  esp_err_t ret = esp_zb_basic_cluster_add_attr(basicCluster, ZB_BASIC_SW_BUILD_ID_ATTR, (void*)zbBuildId);
+  if (ret != ESP_OK) {
+    log_e("Failed to add software build ID to basic cluster: 0x%x: %s", ret, esp_err_to_name(ret));
+    return false;
+  }
+
+  return true;
+}
+
 const char* roleCode(esp_zb_nwk_device_type_t role) {
   switch (role) {
     case ESP_ZB_DEVICE_TYPE_COORDINATOR: return "zc";
@@ -120,6 +154,19 @@ void setupZigbee() {
 
   bool ok = zbCovering.setManufacturerAndModel(ZB_MFR, ZB_MODEL);
   snprintf(msg, sizeof(msg), "ZB mm %u", ok ? 1 : 0);
+  logLine(msg);
+
+  zbCovering.setVersion(SOFTWARE_APPLICATION_VERSION);
+  logLine("ZB appv ok");
+
+  // setVersion() only fills Basic.appVersion. Zigbee2MQTT still requests
+  // Basic.swBuildId separately for Firmware-ID, so we publish both.
+  ok = zbCovering.setSoftwareBuildId(SOFTWARE_VERSION);
+  snprintf(msg, sizeof(msg), "ZB swid %u", ok ? 1 : 0);
+  logLine(msg);
+
+  ok = zbCovering.setPowerSource(ZB_POWER_SOURCE_MAINS);
+  snprintf(msg, sizeof(msg), "ZB pwr %u", ok ? 1 : 0);
   logLine(msg);
 
   zbCovering.setCoveringType(ROLLERSHADE);

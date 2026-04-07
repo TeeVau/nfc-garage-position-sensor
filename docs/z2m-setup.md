@@ -11,6 +11,33 @@ The firmware currently exposes:
 
 - endpoint `10`: window covering
 
+Metadata relevant for Zigbee2MQTT:
+
+- Basic `modelId`
+- Basic `manufacturerName`
+- Basic `powerSource`
+- Basic `appVersion`
+- Basic `swBuildId`
+
+## Firmware-ID And Version Metadata
+
+Zigbee2MQTT distinguishes between multiple version-related Basic-cluster attributes.
+
+Important project detail:
+
+- Espressif's documented Arduino Zigbee API exposes `setVersion()`, which writes Basic `appVersion`.
+- In practice Zigbee2MQTT still reads Basic `swBuildId` separately for the UI field `Firmware-ID`.
+- Our tests showed that `appVersion` alone is not enough: Zigbee2MQTT successfully read `appVersion`, but still reported `swBuildId` as `UNSUPPORTED_ATTRIBUTE`, which left `Firmware-ID` unresolved.
+
+Because of that, the firmware intentionally contains a small local extension around `ZigbeeWindowCovering` that writes Basic attribute `0x4000` (`swBuildId`) before `Zigbee.begin()`.
+
+This is deliberate and should not be removed as a "cleanup" unless Zigbee2MQTT is verified again against the real device.
+
+Current mapping used by this project:
+
+- `SOFTWARE_APPLICATION_VERSION` -> Basic `appVersion`
+- `SOFTWARE_VERSION` -> serial startup banner and Basic `swBuildId`
+
 ## Pair Or Re-Pair The Device
 
 Recommended path:
