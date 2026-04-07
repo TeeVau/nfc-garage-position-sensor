@@ -20,7 +20,20 @@ extern "C" {
 }
 
 Adafruit_PN532 nfc(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_PN532_SS);
-ZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
+
+// Espressif's documented Arduino ZigbeeEP API exposes setVersion() for the
+// Basic Application Version attribute, but it does not expose a public setter
+// for Basic.swBuildId. Zigbee2MQTT reads appVersion successfully, yet still
+// keeps Firmware-ID unknown unless swBuildId is present. We therefore extend
+// the endpoint locally so we can add swBuildId before Zigbee.begin().
+class GarageZigbeeWindowCovering : public ZigbeeWindowCovering {
+public:
+  using ZigbeeWindowCovering::ZigbeeWindowCovering;
+
+  bool setSoftwareBuildId(const char* buildId);
+};
+
+GarageZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
 
 #if BLE_DEBUG_ENABLED
 char bleDeviceName[BLE_NAME_LEN] = {0};
