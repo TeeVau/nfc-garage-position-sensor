@@ -19,6 +19,30 @@ Metadata relevant for Zigbee2MQTT:
 - Basic `appVersion`
 - Basic `swBuildId`
 
+## External Converter In This Repository
+
+If Zigbee2MQTT still classifies the device as unsupported or exposes incomplete metadata, use the repository-provided external converter:
+
+- `zigbee2mqtt/external_converters/nfc-garage-position-sensor.js`
+
+What this converter does:
+
+- fingerprints the device by Basic `modelId = nfc-garage-position-sensor`
+- fingerprints the device by Basic `manufacturerName = TeeVau`
+- exposes read-only `position` and `state`
+- binds reporting for `closuresWindowCovering` on endpoint `10`
+
+Recommended installation:
+
+1. Copy `zigbee2mqtt/external_converters/nfc-garage-position-sensor.js` into Zigbee2MQTT's `external_converters` directory next to its `configuration.yaml`.
+2. Restart Zigbee2MQTT.
+3. Remove the previously interviewed device if needed.
+4. Pair the sensor again so Zigbee2MQTT interviews it with the external converter active.
+
+Important note:
+
+- The converter is intentionally read-only. The device is used as a position sensor even though it reports through the Window Covering cluster.
+
 ## Firmware-ID And Version Metadata
 
 Zigbee2MQTT distinguishes between multiple version-related Basic-cluster attributes.
@@ -65,6 +89,13 @@ Expected semantics:
 - `position: 100` means fully open
 - `state: "CLOSE"` means closed
 - `state: "OPEN"` means open
+
+For integrations and dashboards, use the unsuffixed fields:
+
+- `position`
+- `state`
+
+If Zigbee2MQTT also shows endpoint-suffixed variants such as `position_10`, `position_default`, `state_10`, or `state_default`, treat those as secondary endpoint-specific or cached values. The intended stable consumer-facing fields for this project are the plain `position` and `state` keys.
 
 ## What You Should See During Tests
 
