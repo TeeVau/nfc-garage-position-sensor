@@ -30,6 +30,7 @@ The current tag transition logic confirms a newly seen tag with `pendingIndex` a
 - [TODO.md](./TODO.md): deferred topics and next engineering tasks
 - [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
 - [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup
+- [zigbee2mqtt/external_converters/nfc-garage-position-sensor.js](./zigbee2mqtt/external_converters/nfc-garage-position-sensor.js): external Zigbee2MQTT converter definition for this sensor
 - [docs/garage-door-position-tracker-codex-handoff.json](./docs/garage-door-position-tracker-codex-handoff.json): earlier project handoff notes
 - [examples/Zigbee_Window_Covering](./examples/Zigbee_Window_Covering): reference example kept for comparison
 
