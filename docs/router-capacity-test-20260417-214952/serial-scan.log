@@ -1,0 +1,498 @@
+﻿  Block Size        :    65536B (  64.0 KB)
+  Sector Size       :     4096B (   4.0 KB)
+  Page Size         :      256B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Flash Frequency   : 80 MHz (source: 80 MHz, divider: 1)
+  Bus Mode          : QIO
+---------------- Date/Time : Apr 17 2026 20:55:29
+  Compile Host OS   : windows
+  ESP-IDF Version   : v5.5.4
+  Arduino Version   : 3.3.8
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32C6_DEV
+  Arduino Variant   : esp32c6
+  Arduino FQBN      : esp32:esp32:esp32c6:UploadSpeed=921600,CDCOnBoot=cdc,CPUFreq=160,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=zigbee,DebugLevel=verbose,EraseFlash=all,JTAGAdapter=default,ZigbeeMode=zczr_debug
+============ Before Setup End ============
+[121931][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_RX (2) cleared
+[121931][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_TX (3) cleared
+[121932][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_CTS (4) cleared
+[121932][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_RTS (5) cleared
+[121933][V][esp32-hal-uart.c:715] _uartDetectPin(): RX: pin 17 -> UART0: currently [GPIO], attach=YES
+[121933][V][esp32-hal-uart.c:715] _uartDetectPin(): TX: pin 16 -> UART0: currently [GPIO], attach=YES
+[121933][D][esp32-hal-uart.c:845] uartSetPins(): Attaching pin 17 to UART0 as RX
+[121934][V][esp32-hal-periman.c:160] perimanSetPinBus(): Pin 17 successfully set to type UART_RX (2) with bus 0x4081132c
+[121934][V][esp32-hal-periman.c:235] perimanSetBusDeinit(): Deinit function for type UART_RX (2) successfully set to 0x42008792
+[121935][D][esp32-hal-uart.c:849] uartSetPins(): Attaching pin 16 to UART0 as TX
+[121935][V][esp32-hal-periman.c:160] perimanSetPinBus(): Pin 16 successfully set to type UART_TX (3) with bus 0x4081132c
+[121936][V][esp32-hal-periman.c:235] perimanSetBusDeinit(): Deinit function for type UART_TX (3) successfully set to 0x42008658
+[121937][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 12 already has type USB_DM (38) with bus 0x40814410
+[121937][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 13 already has type USB_DP (39) with bus 0x40814410
+[121938][D][ZigbeeCore.cpp:164] zigbeeInit(): Initialize Zigbee stack
+[121988][W][ZigbeeCore.cpp:169] zigbeeInit(): No Zigbee EPs to register
+[121992][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+[121993][I][ZigbeeCore.cpp:275] esp_zb_app_signal_handler(): Zigbee stack initialized
+[121994][D][ZigbeeCore.cpp:276] esp_zb_app_signal_handler(): Zigbee channel mask: 0x07fff800
+[121997][I][ZigbeeCore.cpp:282] esp_zb_app_signal_handler(): Device started up in  factory-reset mode
+[121997][I][ZigbeeCore.cpp:289] esp_zb_app_signal_handler(): Start network steering
+Setup done, starting Zigbee network scan...
+[125327][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+[125920][D][ZigbeeCore.cpp:760] searchBindings(): Requesting binding table for address 0x65ba
+[125921][W][ZigbeeHandlers.cpp:84] zb_action_handler(): Receive unhandled Zigbee action(0x1f00) callback
+[125923][D][ZigbeeCore.cpp:568] bindingTableCb(): Binding table callback for address 0x65ba with status 0
+[125923][D][ZigbeeCore.cpp:572] bindingTableCb(): Binding table info: total 0, index 0, count 0
+[125924][D][ZigbeeCore.cpp:575] bindingTableCb(): No binding table entries found
+Starting Zigbee network scan...
+[130000][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   430588 B ( 420.5 KB)
+  Free Bytes        :   362428 B ( 353.9 KB)
+  Allocated Bytes   :    60808 B (  59.4 KB)
+  Minimum Free Bytes:   362336 B ( 353.8 KB)
+  Largest Free Block:   344052 B ( 336.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+    12 : USB_DM
+    13 : USB_DP
+    16 : UART_TX[0]
+    17 : UART_RX[0]
+============ After Setup End =============
+[130509][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[130510][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+scan status=0
+No networks found
+[130532][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+ZB_TRACE_LOG[0]: nwk/nwk_main.c:1054    Need to send RREC prior to send a packet
+[135301][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+[136002][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+[138646][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[138647][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+scan status=0
+No networks found
+[139052][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[139917][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: NWK No Active Links Left (0x18), status: ESP_OK
+[142008][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+ZB_TRACE_LOG[0]: nwk/nwk_main.c:4511    zb_nwk_do_leave param 10 rejoin 0
+ZB_TRACE_LOG[0]: common/zb_address.c:1138    zb_address_delete ref 75
+ZB_TRACE_LOG[0]: common/zb_address.c:1138    zb_address_delete ref 75
+ZB_TRACE_LOG[0]: common/zb_address.c:1146    zb_address_delete error: entry is not used
+ZB_TRACE_LOG[0]: nwk/nwk_main.c:4372    Failed zb_nwk_neighbor_delete [-28]
+ZB_TRACE_LOG[0]: nwk/nwk_cr_mesh_routing.c:406    Call zb_nlde_data_confirm(), param 11
+ZB_TRACE_LOG[0]: nwk/nwk_cr_mesh_routing.c:406    Call zb_nlde_data_confirm(), param 28
+ZB_TRACE_LOG[0]: common/zb_address.c:1138    zb_address_delete ref 33
+ZB_TRACE_LOG[0]: nwk/nwk_main.c:4372    Failed zb_nwk_neighbor_delete [-28]
+ZB_TRACE_LOG[0]: common/zb_address.c:1138    zb_address_delete ref 0
+[145782][V][ZigbeeCore.cpp:456] esp_zb_app_signal_handler(): Signal to leave the network, leave type: 0
+[145783][I][ZigbeeCore.cpp:458] esp_zb_app_signal_handler(): Leave without rejoin, factory reset the device
+[145783][V][ZigbeeCore.cpp:496] factoryReset(): Factory resetting Zigbee stack, device will reboot
+ESP-ROM:esp32c6-20220919
+Build:Sep 19 2022
+rst:0xc (SW_CPU),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x4001975a
+SPIWP:0xee
+mode:DIO, clock div:2
+load:0x40875730,len:0x1278
+load:0x4086b910,len:0xdd0
+load:0x4086e610,len:0x3154
+entry 0x4086b910
+[     7][V][esp32-hal-periman.c:235] perimanSetBusDeinit(): Deinit function for type USB_DM (38) successfully set to 0x420046f4
+[    18][V][esp32-hal-periman.c:160] perimanSetPinBus(): Pin 12 successfully set to type USB_DM (38) with bus 0x40814410
+[    29][V][esp32-hal-periman.c:235] perimanSetBusDeinit(): Deinit function for type USB_DP (39) successfully set to 0x420046f4
+[    40][V][esp32-hal-periman.c:160] perimanSetPinBus(): Pin 13 successfully set to type USB_DP (39) with bus 0x40814410
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-C6
+  Package           : 1
+  Revision          : 0.02
+  Cores             : 1
+  CPU Frequency     : 160 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000052
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : Yes
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   430588 B ( 420.5 KB)
+  Free Bytes        :   391424 B ( 382.2 KB)
+  Allocated Bytes   :    32612 B (  31.8 KB)
+  Minimum Free Bytes:   391424 B ( 382.2 KB)
+  Largest Free Block:   368628 B ( 360.0 KB)
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         :  4194304B (4 MB)
+  Block Size        :    65536B (  64.0 KB)
+  Sector Size       :     4096B (   4.0 KB)
+  Page Size         :      256B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Flash Frequency   : 80 MHz (source: 80 MHz, divider: 1)
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  1280.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00150000, size:  1280.0 KB, type:  APP, subtype: OTA_1
+             spiffs : addr: 0x00290000, size:  1388.0 KB, type: DATA, subtype: SPIFFS
+         zb_storage : addr: 0x003EB000, size:    16.0 KB, type: DATA, subtype: FAT
+             zb_fct : addr: 0x003EF000, size:     4.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x003F0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Apr 17 2026 20:55:29
+  Compile Host OS   : windows
+  ESP-IDF Version   : v5.5.4
+  Arduino Version   : 3.3.8
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32C6_DEV
+  Arduino Variant   : esp32c6
+  Arduino FQBN      : esp32:esp32:esp32c6:UploadSpeed=921600,CDCOnBoot=cdc,CPUFreq=160,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=zigbee,DebugLevel=verbose,EraseFlash=all,JTAGAdapter=default,ZigbeeMode=zczr_debug
+============ Before Setup End ============
+[   163][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_RX (2) cleared
+[   163][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_TX (3) cleared
+[   163][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_CTS (4) cleared
+[   164][V][esp32-hal-periman.c:251] perimanClearBusDeinit(): Deinit function for type UART_RTS (5) cleared
+[   164][V][esp32-hal-uart.c:715] _uartDetectPin(): RX: pin 17 -> UART0: currently [GPIO], attach=YES
+[   165][V][esp32-hal-uart.c:715] _uartDetectPin(): TX: pin 16 -> UART0: currently [GPIO], attach=YES
+[   165][D][esp32-hal-uart.c:845] uartSetPins(): Attaching pin 17 to UART0 as RX
+[   166][V][esp32-hal-periman.c:160] perimanSetPinBus(): Pin 17 successfully set to type UART_RX (2) with bus 0x4081132c
+[   166][V][esp32-hal-periman.c:235] perimanSetBusDeinit(): Deinit function for type UART_RX (2) successfully set to 0x42008792
+[   167][D][esp32-hal-uart.c:849] uartSetPins(): Attaching pin 16 to UART0 as TX
+[   167][V][esp32-hal-periman.c:160] perimanSetPinBus(): Pin 16 successfully set to type UART_TX (3) with bus 0x4081132c
+[   168][V][esp32-hal-periman.c:235] perimanSetBusDeinit(): Deinit function for type UART_TX (3) successfully set to 0x42008658
+[   169][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 12 already has type USB_DM (38) with bus 0x40814410
+[   169][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 13 already has type USB_DP (39) with bus 0x40814410
+[   169][D][ZigbeeCore.cpp:164] zigbeeInit(): Initialize Zigbee stack
+[   221][W][ZigbeeCore.cpp:169] zigbeeInit(): No Zigbee EPs to register
+[   224][V][ZigbeeCore.cpp:466] esp_zb_app_signal_handler(): ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+[   225][I][ZigbeeCore.cpp:275] esp_zb_app_signal_handler(): Zigbee stack initialized
+[   226][D][ZigbeeCore.cpp:276] esp_zb_app_signal_handler(): Zigbee channel mask: 0x07fff800
+[   228][I][ZigbeeCore.cpp:282] esp_zb_app_signal_handler(): Device started up in  factory-reset mode
+[   229][I][ZigbeeCore.cpp:289] esp_zb_app_signal_handler(): Start network steering
+Setup done, starting Zigbee network scan...
+ZB_TRACE_LOG[0]: nwk/nwk_join.c:251    No dev for join
+ZB_TRACE_LOG[0]: nwk/nwk_join.c:251    No dev for join
+ZB_TRACE_LOG[0]: nwk/nwk_join.c:251    No dev for join
+ZB_TRACE_LOG[0]: zdo/zdo_commissioning.c:212    Can't find PAN to join to! param 0
+[  2458][I][ZigbeeCore.cpp:352] esp_zb_app_signal_handler(): Network steering was not successful (status: ESP_FAIL)
+ZB_TRACE_LOG[0]: nwk/nwk_join.c:251    No dev for join
+ZB_TRACE_LOG[0]: nwk/nwk_join.c:251    No dev for join
+ZB_TRACE_LOG[0]: nwk/nwk_join.c:251    No dev for join
+ZB_TRACE_LOG[0]: zdo/zdo_commissioning.c:212    Can't find PAN to join to! param 0
+[  5688][I][ZigbeeCore.cpp:352] esp_zb_app_signal_handler(): Network steering was not successful (status: ESP_FAIL)
+Starting Zigbee network scan...
+[  8232][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+==========[  8233][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[  8233][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+= After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   430588 B ( 420.5 KB)
+  Free Bytes        :   362424 B ( 353.9 KB)
+  Allocated Bytes   :    60812 B (  59.4 KB)
+  Minimum Free Bytes:   362332 B ( 353.8 KB)
+  Largest Free Block:   344052 B ( 336.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+    12 : USB_DM
+    13 : USB_DP
+    16 : UART_TX[0]
+    17 : UART_RX[0]
+============ After Setup End =============
+No networks found
+[  8263][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+[  8263][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[  8264][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+scan status=0
+No networks found
+[  8763][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+[  8764][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[  8764][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+ZB_TRACE_LOG[0]: zdo/zdo_commissioning.c:212    Can't find PAN to join to! param 4
+[  8916][I][ZigbeeCore.cpp:352] esp_zb_app_signal_handler(): Network steering was not successful (status: ESP_FAIL)
+No networks found
+[  9263][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 12144][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 12145][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 12145][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 12283][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 20396][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 20397][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 20397][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 20813][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 28926][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 28927][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 28927][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 29343][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 37456][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 37457][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 37457][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 37873][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 45986][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 45987][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 45987][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 46408][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 54521][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 54522][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 54522][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 54939][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 63052][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 63053][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+scan status=0
+No networks found
+[ 63459][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 71572][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 71573][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 71573][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 71989][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 80102][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 80103][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 80103][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 80524][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 88637][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 88638][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 0 networks
+scan status=0
+No networks found
+[ 89044][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[ 97157][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[ 97158][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[ 97158][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[ 97575][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[105688][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[105689][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[105689][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[106105][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[114218][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[114219][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[114219][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[114640][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[122753][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[122754][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[122754][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[123171][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[131284][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[131285][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[131285][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[131701][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[139814][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[139815][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[139815][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[140231][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[148344][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[148345][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[148345][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[148766][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[156879][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[156880][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[156880][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[157296][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[165409][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[165410][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[165410][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+[165826][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[173939][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[173940][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[173940][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[174356][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[182469][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[182470][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[182470][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+[182892][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[191005][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[191006][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[191006][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+[191422][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[199535][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[199536][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[199536][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[199952][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[208065][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[208066][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[208066][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[208482][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[216595][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[216596][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[216596][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[217017][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[225130][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[225131][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[225131][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[225547][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[233660][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[233661][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[233661][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[234077][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1

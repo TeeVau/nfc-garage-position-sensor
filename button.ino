@@ -14,7 +14,7 @@ void pollButton() {
 
   while (digitalRead(BUTTON_PIN) == LOW) {
     delay(50);
-    if ((millis() - startTime) > 3000) {
+    if ((millis() - startTime) > ZB_FACTORY_RESET_HOLD_MS) {
       logLine("ZB reset");
       Zigbee.factoryReset();
       factoryResetTriggered = true;

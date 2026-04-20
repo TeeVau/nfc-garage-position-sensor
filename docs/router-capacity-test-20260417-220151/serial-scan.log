@@ -1,0 +1,300 @@
+﻿o              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[693925][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[702039][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[702040][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[702040][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+[702041][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[702470][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[710583][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[710584][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[710584][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[710585][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[711010][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[719123][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[719124][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[719124][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[719125][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[719550][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[727663][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[727664][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[727664][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[727665][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[728091][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[736204][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[736205][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[736205][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[736626][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[744739][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[744740][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[744740][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[745156][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[753269][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[753270][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[753270][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+[753271][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[753696][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[761809][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[761810][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[761810][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+[761811][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[762236][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[770349][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[770350][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[770350][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[770351][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[770781][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[778894][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[778895][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[778895][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[778896][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[779321][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[787434][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[787435][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[787435][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[787436][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[787861][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[795974][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[795975][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[795975][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[796391][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[804504][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[804505][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[804505][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+[804506][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[804936][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[813049][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[813050][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[813050][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+[813051][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[813476][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[821589][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[821590][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[821590][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[822007][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[830120][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[830121][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[830121][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+[830122][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[830548][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[838662][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[838663][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[838663][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[839083][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[847196][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[847197][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[847197][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[847613][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[855726][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[855727][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[855727][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[856143][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[864256][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[864257][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[864257][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+[864673][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[872786][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[872787][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[872787][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+[873208][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[881321][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[881322][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[881322][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[881738][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[889851][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[889852][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[889852][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[890268][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[898381][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[898382][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[898382][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[898798][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[906911][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[906912][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[906912][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[907333][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[915446][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[915447][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 1 networks
+[915447][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: Yes, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=1
+Scan done
+1 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | Yes            | Yes             | Yes                 | 96:e3:c7:4d:11:90:05:aa
+[915863][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
+[923976][V][ZigbeeCore.cpp:506] scanCompleteCallback(): Zigbee network scan complete
+[923977][V][ZigbeeCore.cpp:508] scanCompleteCallback(): Found 2 networks
+[923977][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 0: PAN ID: 0xaae1, Permit Joining: No, Extended PAN ID: 96:e3:c7:4d:11:90:05:aa, Channel: 15, Router Capacity: No, End Device Capacity: No
+[923978][V][ZigbeeCore.cpp:511] scanCompleteCallback(): Network 1: PAN ID: 0x2b3c, Permit Joining: No, Extended PAN ID: 4b:d4:fe:65:eb:bd:50:bf, Channel: 15, Router Capacity: Yes, End Device Capacity: Yes
+scan status=2
+Scan done
+2 networks found:
+Nr | PAN ID | CH | Permit Joining | Router Capacity | End Device Capacity | Extended PAN ID
+ 1 | 0xaae1 | 15 | No             | No              | No                  | 96:e3:c7:4d:11:90:05:aa
+ 2 | 0x2b3c | 15 | No             | Yes             | Yes                 | 4b:d4:fe:65:eb:bd:50:bf
+[924403][V][ZigbeeCore.cpp:541] scanNetworks(): Scanning Zigbee networks
+scan status=-1
