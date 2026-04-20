@@ -196,21 +196,31 @@ void setupZigbee() {
   Zigbee.setDebugMode(true);
   logLine("ZB dbg on");
 
+  Zigbee.setPrimaryChannelMask(ZB_PRIMARY_CHANNEL_MASK);
+  Zigbee.setTimeout(ZB_JOIN_TIMEOUT_MS);
+  snprintf(msg, sizeof(msg), "ZB cfg mask=0x%08lX timeout=%lus", ZB_PRIMARY_CHANNEL_MASK, ZB_JOIN_TIMEOUT_MS / 1000UL);
+  logLine(msg);
+
   if (!Zigbee.begin()) {
-    logLine("ERR zb begin");
-    delay(1000);
-    ESP.restart();
+    logLine("ERR zb begin timeout");
+    logLine("ZB offline");
+    return;
   }
 
   logLine("ZB join...");
 }
 
 void pollZigbee() {
+  uint32_t now = millis();
+
   if (!Zigbee.started()) {
+    if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
+      lastZigbeeStatusMs = now;
+      logLine("ZB wait start");
+    }
     return;
   }
 
-  uint32_t now = millis();
   bool connected = Zigbee.connected();
 
   if (connected && !zigbeeReady) {
@@ -227,7 +237,5 @@ void pollZigbee() {
   if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
     lastZigbeeStatusMs = now;
     printZigbeeStatus();
-  } else if (!connected) {
-    Serial.print(".");
   }
 }
