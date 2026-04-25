@@ -204,6 +204,7 @@ void setupZigbee() {
   if (!Zigbee.begin()) {
     logLine("ERR zb begin timeout");
     logLine("ZB offline");
+    setStatusLedError();
     return;
   }
 
