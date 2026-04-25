@@ -216,8 +216,18 @@ function Write-BridgeInfoStatus {
     $message = if ($permitJoin) { "ON" } else { "OFF" }
 
     if ($permitJoin -and ($Payload -match '"permit_join_end"\s*:\s*(\d+)')) {
-        $endTime = [DateTimeOffset]::FromUnixTimeSeconds([int64]$Matches[1]).LocalDateTime
-        $message = "$message until $($endTime.ToString("yyyy-MM-dd HH:mm:ss"))"
+        $rawEndTime = [int64]$Matches[1]
+
+        # Some Zigbee2MQTT installations expose permit_join_end in milliseconds.
+        # Accept both units so the status helper stays robust across setups.
+        if ($rawEndTime -gt 253402300799) {
+            $rawEndTime = [int64]($rawEndTime / 1000)
+        }
+
+        if ($rawEndTime -ge -62135596800 -and $rawEndTime -le 253402300799) {
+            $endTime = [DateTimeOffset]::FromUnixTimeSeconds($rawEndTime).LocalDateTime
+            $message = "$message until $($endTime.ToString("yyyy-MM-dd HH:mm:ss"))"
+        }
     }
 
     Write-Host "Zigbee2MQTT permit join: $message"
