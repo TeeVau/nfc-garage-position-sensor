@@ -18,6 +18,11 @@ static constexpr uint32_t ZB_PRIMARY_CHANNEL_MASK = 0x07FFF800;
 // Real-world scans needed about 3 minutes before the network was found.
 static constexpr uint32_t ZB_JOIN_TIMEOUT_MS = 240000;
 static constexpr uint32_t ZB_FACTORY_RESET_HOLD_MS = 10000;
+static constexpr uint32_t STATUS_LED_BOOT_FLASH_MS = 80;
+static constexpr uint32_t STATUS_LED_STARTUP_VISIBLE_MS = 3000;
+static constexpr uint32_t STATUS_LED_START_BLINK_MS = 700;
+static constexpr uint32_t STATUS_LED_PAIRING_BLINK_MS = 180;
+static constexpr uint32_t STATUS_LED_ERROR_BLINK_MS = 250;
 
 static constexpr size_t BLE_NAME_LEN = 48;
 

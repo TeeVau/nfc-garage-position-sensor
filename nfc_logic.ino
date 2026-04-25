@@ -12,6 +12,7 @@ void setupNfc() {
   uint32_t versiondata = nfc.getFirmwareVersion();
   if (!versiondata) {
     logLine("ERR pn532");
+    setStatusLedError();
     while (true) {
       delay(1000);
     }

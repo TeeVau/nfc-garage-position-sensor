@@ -64,6 +64,10 @@ void setupBleUart();
 void setupZigbee();
 void pollZigbee();
 void pollButton();
+void setupStatusLed();
+void pollStatusLed();
+void setStatusLedError();
+void showStatusLedStartupWindow();
 
 void setup() {
   char msg[48];
@@ -76,6 +80,8 @@ void setup() {
   Serial.println(msg);
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
+  setupStatusLed();
+  showStatusLedStartupWindow();
 
   setupNfc();
   setupZigbee();
@@ -86,5 +92,6 @@ void loop() {
   pollButton();
   pollNfc();
   pollZigbee();
+  pollStatusLed();
   delay(LOOP_DELAY_MS);
 }
