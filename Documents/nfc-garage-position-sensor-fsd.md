@@ -56,13 +56,13 @@ The system is intended to provide reliable local door-position feedback without 
 
 ### 2.3 Software Architecture
 
-- Entry point: `nfc-garage-position-sensor.ino`
-- NFC handling: `nfc_logic.ino`
-- Tag map and percent conversion: `tag_map.ino`
-- Zigbee setup and publishing: `zigbee.ino`
-- Local LED diagnostics: `status_led.ino`
-- BLE debug transport: `ble_debug.ino`
-- Button handling and factory reset: `button.ino`
+- Entry point: `src/nfc-garage-position-sensor/nfc-garage-position-sensor.ino`
+- NFC handling: `src/nfc-garage-position-sensor/nfc_logic.ino`
+- Tag map and percent conversion: `src/nfc-garage-position-sensor/tag_map.ino`
+- Zigbee setup and publishing: `src/nfc-garage-position-sensor/zigbee.ino`
+- Local LED diagnostics: `src/nfc-garage-position-sensor/status_led.ino`
+- BLE debug transport: `src/nfc-garage-position-sensor/ble_debug.ino`
+- Button handling and factory reset: `src/nfc-garage-position-sensor/button.ino`
 
 Boot sequence:
 
@@ -239,10 +239,10 @@ Dependencies:
 
 | Producer | Consumer | Purpose |
 |----------|----------|---------|
-| `nfc_logic.ino` | `tag_map.ino` | UID-to-index lookup and percent conversion |
-| `nfc_logic.ino` | `zigbee.ino` | Publish updated confirmed position |
-| `nfc-garage-position-sensor.ino` | `status_led.ino` | Startup sequencing and loop polling |
-| `zigbee.ino` / `nfc_logic.ino` | `status_led.ino` | Error state activation |
+| `src/nfc-garage-position-sensor/nfc_logic.ino` | `src/nfc-garage-position-sensor/tag_map.ino` | UID-to-index lookup and percent conversion |
+| `src/nfc-garage-position-sensor/nfc_logic.ino` | `src/nfc-garage-position-sensor/zigbee.ino` | Publish updated confirmed position |
+| `src/nfc-garage-position-sensor/nfc-garage-position-sensor.ino` | `src/nfc-garage-position-sensor/status_led.ino` | Startup sequencing and loop polling |
+| `src/nfc-garage-position-sensor/zigbee.ino` / `src/nfc-garage-position-sensor/nfc_logic.ino` | `src/nfc-garage-position-sensor/status_led.ino` | Error state activation |
 
 ### 6.3 Data Models / Schemas
 
@@ -265,9 +265,9 @@ Dependencies:
 
 ### Flashing / Deployment
 
-1. Build with `.\build.ps1`
-2. Upload with `.\flash.ps1`
-3. Use `.\flash-clean.ps1` only when a clean re-pair is required
+1. Build with `.\tools\firmware\build.ps1`
+2. Upload with `.\tools\firmware\flash.ps1`
+3. Use `.\tools\firmware\flash-clean.ps1` only when a clean re-pair is required
 
 ### Provisioning / Configuration
 
@@ -296,7 +296,7 @@ Dependencies:
 
 - Use long button press for factory reset
 - If pairing state is inconsistent, remove the device from Zigbee2MQTT and re-interview it
-- If firmware changes require a fresh network state, use `flash-clean.ps1`
+- If firmware changes require a fresh network state, use `tools/firmware/flash-clean.ps1`
 
 ## 8. Verification and Validation
 
@@ -304,9 +304,9 @@ Dependencies:
 
 | Test ID | Feature | Procedure | Success Criteria |
 |---------|---------|-----------|-----------------|
-| TC-1.1 | Build environment | Run `.\build.ps1` | Sketch compiles for ESP32-C6 |
-| TC-1.2 | Flash workflow | Run `.\flash.ps1` on the device | Upload completes and device reboots |
-| TC-1.3 | Serial diagnostics | Run `.\monitor.ps1` or direct serial read | Boot and runtime logs are visible |
+| TC-1.1 | Build environment | Run `.\tools\firmware\build.ps1` | Sketch compiles for ESP32-C6 |
+| TC-1.2 | Flash workflow | Run `.\tools\firmware\flash.ps1` on the device | Upload completes and device reboots |
+| TC-1.3 | Serial diagnostics | Run `.\tools\firmware\monitor.ps1` or direct serial read | Boot and runtime logs are visible |
 
 ### 8.2 Phase 2 Verification
 

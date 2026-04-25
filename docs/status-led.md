@@ -2,7 +2,7 @@
 
 This project uses the ESP32-C6 onboard WS2812 LED as a local runtime indicator.
 
-The implementation lives in `status_led.ino` and uses the ESP32 Arduino core's `RGB_BUILTIN` / `rgbLedWrite()` path instead of an extra NeoPixel library.
+The implementation lives in `src/nfc-garage-position-sensor/status_led.ino` and uses the ESP32 Arduino core's `RGB_BUILTIN` / `rgbLedWrite()` path instead of an extra NeoPixel library.
 
 ## State Mapping
 
@@ -22,7 +22,7 @@ In practice, the ESP32-C6 can rejoin Zigbee quickly enough that a purely runtime
 
 To keep the visual feedback useful in the real world, the firmware forces a visible startup window before Zigbee initialization continues.
 
-Current defaults from `config.h`:
+Current defaults from `src/nfc-garage-position-sensor/config.h`:
 
 - `STATUS_LED_BOOT_FLASH_MS = 80`
 - `STATUS_LED_STARTUP_VISIBLE_MS = 3000`

@@ -107,23 +107,23 @@ For the full pairing, metadata, and expected payload behavior, see [docs/z2m-set
 ### Common Commands
 
 ```powershell
-.\build.ps1
-.\flash.ps1
-.\monitor.ps1
+.\tools\firmware\build.ps1
+.\tools\firmware\flash.ps1
+.\tools\firmware\monitor.ps1
 ```
 
 Clean flash for a fresh Zigbee join:
 
 ```powershell
-.\flash-clean.ps1
+.\tools\firmware\flash-clean.ps1
 ```
 
 If PowerShell blocks local scripts:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1
-powershell -ExecutionPolicy Bypass -File .\flash.ps1
-powershell -ExecutionPolicy Bypass -File .\monitor.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\firmware\build.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\firmware\flash.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\firmware\monitor.ps1
 ```
 
 The monitor script can take a bit of time to attach and start showing data after a reset or reconnect. Give it a short grace period before treating the connection as failed.
@@ -158,22 +158,25 @@ On this machine, Arduino IDE compile times can take several minutes.
 
 ## Repository Layout
 
-- [nfc-garage-position-sensor.ino](./nfc-garage-position-sensor.ino): setup, loop, and shared globals
-- [config.h](./config.h): project constants and shared configuration
-- [nfc_logic.ino](./nfc_logic.ino): PN532 handling and position state machine
-- [tag_map.ino](./tag_map.ino): UID table and percent conversion
-- [zigbee.ino](./zigbee.ino): Zigbee setup, status, and publishing
-- [status_led.ino](./status_led.ino): onboard WS2812 status indication
-- [ble_debug.ino](./ble_debug.ino): BLE UART debug transport
-- [button.ino](./button.ino): short-press diagnostics and long-press reset
-- [build.ps1](./build.ps1): compile helper
-- [flash.ps1](./flash.ps1): upload while keeping pairing state
-- [flash-clean.ps1](./flash-clean.ps1): clean-flash upload for re-pair workflows
-- [monitor.ps1](./monitor.ps1): serial monitor with reconnect handling
+- [src/nfc-garage-position-sensor/nfc-garage-position-sensor.ino](./src/nfc-garage-position-sensor/nfc-garage-position-sensor.ino): setup, loop, and shared globals
+- [src/nfc-garage-position-sensor/config.h](./src/nfc-garage-position-sensor/config.h): project constants and shared configuration
+- [src/nfc-garage-position-sensor/nfc_logic.ino](./src/nfc-garage-position-sensor/nfc_logic.ino): PN532 handling and position state machine
+- [src/nfc-garage-position-sensor/tag_map.ino](./src/nfc-garage-position-sensor/tag_map.ino): UID table and percent conversion
+- [src/nfc-garage-position-sensor/zigbee.ino](./src/nfc-garage-position-sensor/zigbee.ino): Zigbee setup, status, and publishing
+- [src/nfc-garage-position-sensor/status_led.ino](./src/nfc-garage-position-sensor/status_led.ino): onboard WS2812 status indication
+- [src/nfc-garage-position-sensor/ble_debug.ino](./src/nfc-garage-position-sensor/ble_debug.ino): BLE UART debug transport
+- [src/nfc-garage-position-sensor/button.ino](./src/nfc-garage-position-sensor/button.ino): short-press diagnostics and long-press reset
+- [tools/firmware/build.ps1](./tools/firmware/build.ps1): compile helper
+- [tools/firmware/flash.ps1](./tools/firmware/flash.ps1): upload while keeping pairing state
+- [tools/firmware/flash-clean.ps1](./tools/firmware/flash-clean.ps1): clean-flash upload for re-pair workflows
+- [tools/firmware/monitor.ps1](./tools/firmware/monitor.ps1): serial monitor with reconnect handling
+- [tools/firmware/serial-capture.ps1](./tools/firmware/serial-capture.ps1): short serial capture helper for diagnostics
+- [tools/z2m-join.ps1](./tools/z2m-join.ps1): Zigbee2MQTT join helper
 - [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
 - [docs/status-led.md](./docs/status-led.md): LED state documentation
 - [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup and expectations
 - [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md): functional specification document
+- [examples/Zigbee_Window_Covering](./examples/Zigbee_Window_Covering): upstream reference example kept for comparison
 - [TODO.md](./TODO.md): deferred topics such as OTA over temporary Wi-Fi AP
 
 ## Troubleshooting
@@ -200,7 +203,7 @@ That can be normal after reset or USB reconnect. Wait for the monitor to finish 
 
 ### The LED State Is Unexpected
 
-Compare the visible LED pattern against [docs/status-led.md](./docs/status-led.md) and, if needed, verify it against serial output from `monitor.ps1`.
+Compare the visible LED pattern against [docs/status-led.md](./docs/status-led.md) and, if needed, verify it against serial output from `tools/firmware/monitor.ps1`.
 
 ## Further Documentation
 
