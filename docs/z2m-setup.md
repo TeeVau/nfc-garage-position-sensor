@@ -2,6 +2,11 @@
 
 This document describes the current simplified Zigbee2MQTT setup for the garage door sensor.
 
+Repository layout note:
+
+- firmware sources live under `src/nfc-garage-position-sensor`
+- build and flash helpers live under `tools/firmware`
+
 Goal:
 
 - `position`: opening percentage with `0 = closed`, `100 = open`
@@ -66,10 +71,12 @@ Current mapping used by this project:
 
 Recommended path:
 
-1. Remove the already known garage sensor from Zigbee2MQTT.
-2. Permit joining in Zigbee2MQTT.
-3. Put the ESP32-C6 device into pairing mode again.
-4. Let Zigbee2MQTT interview the device from scratch.
+1. Build the current firmware with `.\tools\firmware\build.ps1`.
+2. Flash it with `.\tools\firmware\flash.ps1` or, for a forced re-pair flow, `.\tools\firmware\flash-clean.ps1`.
+3. Remove the already known garage sensor from Zigbee2MQTT.
+4. Permit joining in Zigbee2MQTT.
+5. Put the ESP32-C6 device into pairing mode again.
+6. Let Zigbee2MQTT interview the device from scratch.
 
 Why this is recommended:
 

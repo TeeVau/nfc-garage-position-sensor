@@ -104,6 +104,8 @@ For the full pairing, metadata, and expected payload behavior, see [docs/z2m-set
 
 ## Build, Flash, And Monitor
 
+The Arduino sketch now lives under `src/nfc-garage-position-sensor`, while the helper scripts for build, flash, and monitoring live under `tools/firmware`.
+
 ### Common Commands
 
 ```powershell
@@ -157,6 +159,16 @@ On this machine, Arduino IDE compile times can take several minutes.
 | `NimBLEDevice` | BLE UART debug output when `BLE_DEBUG_ENABLED` is enabled |
 
 ## Repository Layout
+
+### Top-Level Structure
+
+- `src/nfc-garage-position-sensor`: firmware sketch and local source files
+- `tools/firmware`: build, flash, monitor, and serial-capture helpers
+- `docs`: user-facing setup notes, diagnostics, and validation artifacts
+- `zigbee2mqtt`: repository-owned Zigbee2MQTT converter files
+- `Documents`: functional specification and longer-form project documentation
+
+### Key Files
 
 - [src/nfc-garage-position-sensor/nfc-garage-position-sensor.ino](./src/nfc-garage-position-sensor/nfc-garage-position-sensor.ino): setup, loop, and shared globals
 - [src/nfc-garage-position-sensor/config.h](./src/nfc-garage-position-sensor/config.h): project constants and shared configuration

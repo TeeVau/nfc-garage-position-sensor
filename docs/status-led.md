@@ -38,7 +38,7 @@ Current defaults from `src/nfc-garage-position-sensor/config.h`:
 4. Present the `0 %` NFC tag and confirm solid green.
 5. Present any non-zero tag and confirm orange.
 
-For a deeper diagnostic run, attach the serial monitor in parallel and compare the LED behavior against `ZB ...` and `TAG ...` log lines.
+For a deeper diagnostic run, attach the serial monitor in parallel with `.\tools\firmware\monitor.ps1` and compare the LED behavior against `ZB ...` and `TAG ...` log lines.
 
 ## Current Scope And Future Ideas
 
