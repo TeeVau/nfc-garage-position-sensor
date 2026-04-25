@@ -67,7 +67,7 @@ void pollButton();
 void setupStatusLed();
 void pollStatusLed();
 void setStatusLedError();
-void markStatusLedStartup();
+void showStatusLedStartupWindow();
 
 void setup() {
   char msg[48];
@@ -81,11 +81,11 @@ void setup() {
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   setupStatusLed();
+  showStatusLedStartupWindow();
 
   setupNfc();
   setupZigbee();
   setupBleUart();
-  markStatusLedStartup();
 }
 
 void loop() {

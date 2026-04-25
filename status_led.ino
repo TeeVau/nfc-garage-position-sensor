@@ -16,7 +16,6 @@ static constexpr uint32_t STATUS_LED_PAIRING = statusLedColor(0, 0, 40);
 static constexpr uint32_t STATUS_LED_ERROR = statusLedColor(36, 0, 0);
 
 bool statusLedErrorActive = false;
-uint32_t statusLedStartupVisibleUntilMs = 0;
 
 bool statusLedBlinkOn(uint32_t now, uint32_t intervalMs) {
   if (intervalMs == 0) {
@@ -24,10 +23,6 @@ bool statusLedBlinkOn(uint32_t now, uint32_t intervalMs) {
   }
 
   return ((now / intervalMs) % 2U) == 0U;
-}
-
-bool statusLedHoldActive(uint32_t now, uint32_t untilMs) {
-  return untilMs != 0 && static_cast<int32_t>(untilMs - now) > 0;
 }
 
 void writeStatusLed(uint32_t color) {
@@ -49,12 +44,20 @@ void setupStatusLed() {
   writeStatusLed(STATUS_LED_OFF);
 }
 
-void setStatusLedError() {
-  statusLedErrorActive = true;
+void showStatusLedStartupWindow() {
+  uint32_t startMs = millis();
+
+  while (millis() - startMs < STATUS_LED_STARTUP_VISIBLE_MS) {
+    uint32_t now = millis();
+    writeStatusLed(statusLedBlinkOn(now, STATUS_LED_START_BLINK_MS) ? STATUS_LED_JOIN : STATUS_LED_OFF);
+    delay(25);
+  }
+
+  writeStatusLed(STATUS_LED_OFF);
 }
 
-void markStatusLedStartup() {
-  statusLedStartupVisibleUntilMs = millis() + STATUS_LED_STARTUP_VISIBLE_MS;
+void setStatusLedError() {
+  statusLedErrorActive = true;
 }
 
 void pollStatusLed() {
@@ -63,8 +66,6 @@ void pollStatusLed() {
 
   if (statusLedErrorActive) {
     color = statusLedBlinkOn(now, STATUS_LED_ERROR_BLINK_MS) ? STATUS_LED_ERROR : STATUS_LED_OFF;
-  } else if (statusLedHoldActive(now, statusLedStartupVisibleUntilMs)) {
-    color = statusLedBlinkOn(now, STATUS_LED_START_BLINK_MS) ? STATUS_LED_JOIN : STATUS_LED_OFF;
   } else if (!Zigbee.started()) {
     color = statusLedBlinkOn(now, STATUS_LED_START_BLINK_MS) ? STATUS_LED_JOIN : STATUS_LED_OFF;
   } else if (!zigbeeReady) {
