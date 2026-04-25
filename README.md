@@ -1,40 +1,110 @@
 # NFC Garage Position Sensor
 
-ESP32-C6 sketch for a garage door position sensor based on PN532 NFC tags.
+ESP32-C6 firmware for a garage door position sensor based on fixed PN532 NFC tags and Zigbee reporting.
 
-The firmware reads NFC tag UIDs, maps them to a logical door position, and reports the current state over Zigbee as a window covering device. Serial debug output stays available for local diagnostics, and BLE debug can be re-enabled when needed.
+The device reads NFC tag UIDs, confirms a stable door position, converts that into a logical opening percentage, and exposes the result to Zigbee2MQTT as a Window Covering device. In parallel, the onboard WS2812 LED provides direct local status feedback for boot, startup/join, ready, closed, open, and error states.
 
-## Status
+## Overview
 
 - MCU: `ESP32-C6`
 - NFC reader: `PN532` via SPI
-- Zigbee: `ZigbeeWindowCovering`
-- Debug: serial, optional BLE notifications
+- Zigbee mode: `ZigbeeWindowCovering` end device
+- Local diagnostics: serial logs, onboard `WS2812` status LED
+- Optional diagnostics: BLE UART notifications when enabled
 - Position model: fixed UID order mapped to `0..100 %`
 
-The current tag transition logic confirms a newly seen tag with `pendingIndex` and `pendingCount` before accepting it as the next real position.
+The current runtime logic uses `pendingIndex` plus `pendingCount` to confirm a newly seen NFC tag before it becomes the next real position. That keeps the sketch responsive while reducing false transitions around neighboring tags.
 
-## Repository Layout
+## Features
 
-- [nfc-garage-position-sensor.ino](./nfc-garage-position-sensor.ino): current firmware
-- [config.h](./config.h): project constants and shared configuration
-- [tag_map.ino](./tag_map.ino): NFC tag table and UID helper functions
-- [nfc_logic.ino](./nfc_logic.ino): PN532 handling and position state machine
-- [zigbee.ino](./zigbee.ino): Zigbee setup, status, and publishing
-- [ble_debug.ino](./ble_debug.ino): BLE UART debug output
-- [button.ino](./button.ino): local button handling
-- [build.ps1](./build.ps1): compile helper
-- [flash.ps1](./flash.ps1): normal upload, keeps Zigbee pairing
-- [flash-clean.ps1](./flash-clean.ps1): full erase upload for a fresh Zigbee join
-- [monitor.ps1](./monitor.ps1): serial monitor with reconnect handling
-- [TODO.md](./TODO.md): deferred topics and next engineering tasks
-- [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
-- [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup
-- [zigbee2mqtt/external_converters/nfc-garage-position-sensor.js](./zigbee2mqtt/external_converters/nfc-garage-position-sensor.js): external Zigbee2MQTT converter definition for this sensor
-- [docs/garage-door-position-tracker-codex-handoff.json](./docs/garage-door-position-tracker-codex-handoff.json): earlier project handoff notes
-- [examples/Zigbee_Window_Covering](./examples/Zigbee_Window_Covering): reference example kept for comparison
+- Reads passive NFC tags through the PN532 and maps them to door positions
+- Reports `position` and `state` over Zigbee with `0 = closed` and `100 = open`
+- Publishes both Basic `appVersion` and `swBuildId` so Zigbee2MQTT can resolve Firmware-ID correctly
+- Uses the ESP32-C6 onboard WS2812 LED for visible runtime status
+- Supports local Zigbee diagnostics and factory reset through the onboard button
+- Includes helper scripts for build, flash, clean flash, and serial monitoring
 
-## Build And Flash
+## Hardware
+
+### Core Components
+
+| Component | Purpose |
+|-----------|---------|
+| ESP32-C6 Dev Module | Main controller and Zigbee radio |
+| PN532 | NFC reader |
+| Onboard WS2812 LED | Local status indication |
+| Onboard button | Diagnostics / factory reset |
+
+### Pin Assignments
+
+| Signal | Pin |
+|--------|-----|
+| `PIN_SPI_SCK` | `20` |
+| `PIN_SPI_MISO` | `19` |
+| `PIN_SPI_MOSI` | `18` |
+| `PIN_PN532_SS` | `14` |
+| `BUTTON_PIN` | `9` |
+
+## Firmware Behavior
+
+### Position Semantics
+
+This project keeps the logical door position in the intuitive form:
+
+- `0 %` = closed
+- `100 %` = open
+
+Internally, the Zigbee Window Covering cluster uses inverted lift semantics, so the sketch translates the logical opening percentage before sending it into `ZigbeeWindowCovering`. Zigbee2MQTT should therefore normally use `invert_cover = false`.
+
+### Tag Layout
+
+The UID table is ordered from closed to open. With the current configuration `INDEX_INCREASES_WHEN_OPENING = true`, the first configured tag represents `0 %` and the last tag represents `100 %`.
+
+See [docs/tag-layout.md](./docs/tag-layout.md) for the full table and mapping details.
+
+### Local LED Status
+
+The onboard WS2812 LED gives a quick local indication even when no serial monitor is attached.
+
+| State | LED behavior |
+|-------|--------------|
+| Boot | Short white flash |
+| Startup / early join | Slow blue blink |
+| Zigbee not ready after stack start | Fast blue blink |
+| Ready, no confirmed tag yet | Very dim green |
+| Confirmed closed (`0 %`) | Green |
+| Confirmed non-closed (`> 0 %`) | Orange |
+| Fatal startup error | Red blink |
+
+The startup indicator is intentionally held visible for a few seconds so a fast Zigbee rejoin is still human-noticeable.
+
+See [docs/status-led.md](./docs/status-led.md) for the detailed LED behavior and validation flow.
+
+## Zigbee And Zigbee2MQTT
+
+The device currently exposes:
+
+- endpoint `10`: Window Covering
+- Basic `modelId`
+- Basic `manufacturerName`
+- Basic `powerSource`
+- Basic `appVersion`
+- Basic `swBuildId`
+
+Important project detail:
+
+- `setVersion()` alone is not enough for Zigbee2MQTT Firmware-ID
+- the firmware therefore adds Basic `swBuildId` explicitly before `Zigbee.begin()`
+
+If Zigbee2MQTT needs help classifying the device, use the repository-provided external converter:
+
+- [zigbee2mqtt/external_converters/nfc-garage-position-sensor.js](./zigbee2mqtt/external_converters/nfc-garage-position-sensor.js)
+
+For the full pairing, metadata, and expected payload behavior, see [docs/z2m-setup.md](./docs/z2m-setup.md).
+
+## Build, Flash, And Monitor
+
+### Common Commands
 
 ```powershell
 .\build.ps1
@@ -48,11 +118,15 @@ Clean flash for a fresh Zigbee join:
 .\flash-clean.ps1
 ```
 
-If PowerShell blocks scripts locally:
+If PowerShell blocks local scripts:
 
 ```powershell
+powershell -ExecutionPolicy Bypass -File .\build.ps1
+powershell -ExecutionPolicy Bypass -File .\flash.ps1
 powershell -ExecutionPolicy Bypass -File .\monitor.ps1
 ```
+
+The monitor script can take a bit of time to attach and start showing data after a reset or reconnect. Give it a short grace period before treating the connection as failed.
 
 ## Arduino IDE Settings
 
@@ -63,26 +137,75 @@ Tested with:
 - Partition Scheme: `zigbee`
 - CDC On Boot: `cdc`
 
-On this machine, Arduino IDE compile times can be around 10 minutes.
+On this machine, Arduino IDE compile times can take several minutes.
 
-## Zigbee Behavior
+## Software Dependencies
 
-- The device joins as Zigbee end device.
-- Position is published as lift percentage with cover semantics: `0 = closed`, `100 = open`.
+### Required Libraries / Core Features
 
-`INDEX_INCREASES_WHEN_OPENING` in [config.h](./config.h) defines how the UID table maps to Zigbee cover semantics.
+| Library / Core Component | Purpose |
+|--------------------------|---------|
+| `SPI` | PN532 communication |
+| `Adafruit_PN532` | NFC reader access |
+| `Zigbee` / `ZigbeeWindowCovering` | Zigbee endpoint and reporting |
+| ESP32 Arduino RGB LED API | Onboard WS2812 control |
 
-We keep the firmware aligned with the SDK and Zigbee2MQTT semantics:
+### Optional
 
-- `0 %` opening = `CLOSE`
-- `100 %` opening = `OPEN`
-- the tag labeled `0 %` represents a closed door
-- the tag labeled `100 %` represents a fully open door
+| Library | Purpose |
+|---------|---------|
+| `NimBLEDevice` | BLE UART debug output when `BLE_DEBUG_ENABLED` is enabled |
 
-With the current setting `true`, index `0` maps to `0 % / CLOSE` and the last index maps to `100 % / OPEN`, matching a UID table that runs from closed to open.
+## Repository Layout
 
-Before sending the value into `ZigbeeWindowCovering`, the firmware converts the opening percentage to the Zigbee Window Covering lift percentage used by the cluster in practice. This keeps our project semantics stable even though the cluster-facing value is inverted.
+- [nfc-garage-position-sensor.ino](./nfc-garage-position-sensor.ino): setup, loop, and shared globals
+- [config.h](./config.h): project constants and shared configuration
+- [nfc_logic.ino](./nfc_logic.ino): PN532 handling and position state machine
+- [tag_map.ino](./tag_map.ino): UID table and percent conversion
+- [zigbee.ino](./zigbee.ino): Zigbee setup, status, and publishing
+- [status_led.ino](./status_led.ino): onboard WS2812 status indication
+- [ble_debug.ino](./ble_debug.ino): BLE UART debug transport
+- [button.ino](./button.ino): short-press diagnostics and long-press reset
+- [build.ps1](./build.ps1): compile helper
+- [flash.ps1](./flash.ps1): upload while keeping pairing state
+- [flash-clean.ps1](./flash-clean.ps1): clean-flash upload for re-pair workflows
+- [monitor.ps1](./monitor.ps1): serial monitor with reconnect handling
+- [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
+- [docs/status-led.md](./docs/status-led.md): LED state documentation
+- [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup and expectations
+- [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md): functional specification document
+- [TODO.md](./TODO.md): deferred topics such as OTA over temporary Wi-Fi AP
 
-For Zigbee2MQTT this means `invert_cover` should normally stay `false`. If Zigbee2MQTT still shows the opposite direction, check that device option there as well.
+## Troubleshooting
 
-`flash.ps1` keeps existing Zigbee pairing. Use `flash-clean.ps1` only when you explicitly want a clean re-pair.
+### Zigbee2MQTT Shows Inverted Position
+
+Check that:
+
+- the current firmware is flashed
+- `invert_cover` in Zigbee2MQTT is `false`
+
+Expected:
+
+- `0 %` tag -> `position: 0`, `state: CLOSE`
+- `100 %` tag -> `position: 100`, `state: OPEN`
+
+### Firmware-ID Is Missing
+
+Re-pair the device after flashing significant Zigbee metadata changes. This project relies on Basic `swBuildId` in addition to `appVersion`.
+
+### The Monitor Starts Slowly
+
+That can be normal after reset or USB reconnect. Wait for the monitor to finish attaching before retrying.
+
+### The LED State Is Unexpected
+
+Compare the visible LED pattern against [docs/status-led.md](./docs/status-led.md) and, if needed, verify it against serial output from `monitor.ps1`.
+
+## Further Documentation
+
+- [docs/status-led.md](./docs/status-led.md)
+- [docs/tag-layout.md](./docs/tag-layout.md)
+- [docs/z2m-setup.md](./docs/z2m-setup.md)
+- [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md)
+- [TODO.md](./TODO.md)

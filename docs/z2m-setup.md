@@ -76,6 +76,11 @@ Why this is recommended:
 - The firmware changed.
 - A fresh interview is the most reliable way to make sure Zigbee2MQTT sees the current endpoint shape.
 
+Local device hint during bring-up:
+
+- even without the serial monitor, the onboard LED should show a short white boot flash followed by a visible blue startup/join indication
+- after the device is ready, closed should appear green and non-closed should appear orange
+
 ## Expected Device Behavior In Zigbee2MQTT
 
 Expected payload fields:
