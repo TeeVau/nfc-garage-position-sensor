@@ -176,7 +176,6 @@ On this machine, Arduino IDE compile times can take several minutes.
 - [docs/status-led.md](./docs/status-led.md): LED state documentation
 - [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup and expectations
 - [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md): functional specification document
-- [TODO.md](./TODO.md): deferred topics such as OTA over temporary Wi-Fi AP
 
 ## Troubleshooting
 
@@ -210,4 +209,3 @@ Compare the visible LED pattern against [docs/status-led.md](./docs/status-led.m
 - [docs/tag-layout.md](./docs/tag-layout.md)
 - [docs/z2m-setup.md](./docs/z2m-setup.md)
 - [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md)
-- [TODO.md](./TODO.md)
