@@ -6,3 +6,4 @@ serial.log
 docs/router-capacity-test-*/
 docs/z2m-dump-*/
 docs/*handoff*.json
+tmp/

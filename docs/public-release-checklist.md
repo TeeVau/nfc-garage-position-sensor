@@ -54,12 +54,12 @@ This checklist tracks the remaining work before switching the repository to publ
 
 ### Final Go-Live Check
 
-- [ ] `git status` is clean
+- [x] `git status` is clean
 - [x] No sensitive diagnostics or dump files remain in the current branch
 - [x] No sensitive diagnostics or dump files remain in Git history
 - [x] License file exists in the repository root
 - [x] `README.md` and project docs are consistent with the current repository structure
-- [ ] Only then switch the repository visibility to public
+- [x] Only then switch the repository visibility to public
 
 ## Files Removed From The Current Branch
 
@@ -67,16 +67,16 @@ This checklist tracks the remaining work before switching the repository to publ
 - `docs/z2m-dump-*`
 - `docs/*handoff*.json`
 
-These paths are now ignored for future local work, but old commits still contain them.
+These paths are now ignored for future local work and were also removed from reachable branch history before the repository was made public.
 
 ## History Rewrite Required
 
-The following commits still contain files that should not remain in a future public repository:
+The following commits originally contained files that should not remain in a public repository:
 
 - `4a7a6b2`
 - `5dcaa19`
 
-Before making the repository public, remove the affected paths from Git history and then force-push the rewritten branch.
+Those paths were removed from Git history and the rewritten branch history was force-pushed before the repository visibility was changed to public.
 
 ## Recommended Final Sequence
 
@@ -85,3 +85,4 @@ Before making the repository public, remove the affected paths from Git history 
 3. Verify that the rewritten history no longer exposes those files.
 4. Run one last repository review for public-facing wording and metadata.
 5. Switch the repository visibility to public.
+6. Confirm that the current working tree is clean or only contains intentionally ignored local development artifacts.
