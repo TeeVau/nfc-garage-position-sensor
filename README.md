@@ -95,6 +95,8 @@ Important project detail:
 
 - `setVersion()` alone is not enough for Zigbee2MQTT Firmware-ID
 - the firmware therefore adds Basic `swBuildId` explicitly before `Zigbee.begin()`
+- Zigbee2MQTT can complete `interview` successfully while still skipping the converter `configure()` step
+- the firmware therefore actively reports the cover position directly to coordinator endpoint `1`, so state delivery no longer depends on the binding/reporting setup being present
 
 If Zigbee2MQTT needs help classifying the device, use the repository-provided external converter:
 
@@ -127,6 +129,27 @@ powershell -ExecutionPolicy Bypass -File .\tools\firmware\build.ps1
 powershell -ExecutionPolicy Bypass -File .\tools\firmware\flash.ps1
 powershell -ExecutionPolicy Bypass -File .\tools\firmware\monitor.ps1
 ```
+
+BLE debug build for garage-side testing:
+
+```powershell
+.\tools\firmware\build.ps1 -EnableBleDebug
+.\tools\firmware\flash.ps1 -EnableBleDebug
+```
+
+Short serial capture with optional log file:
+
+```powershell
+.\tools\firmware\serial-capture.ps1 -Port COM3 -DurationSeconds 30 -OutputFile .\tmp\serial.log
+```
+
+Short MQTT capture for Zigbee2MQTT bridge topics plus one device topic:
+
+```powershell
+.\tools\mqtt-capture.ps1 -BrokerHost 192.168.178.2 -DeviceId 0x58e6c5fffedd775c -DurationSeconds 30 -OutputFile .\tmp\mqtt.log
+```
+
+This uses a separate build variant so the normal and BLE-debug artifacts do not overwrite each other.
 
 The monitor script can take a bit of time to attach and start showing data after a reset or reconnect. Give it a short grace period before treating the connection as failed.
 
@@ -182,7 +205,8 @@ On this machine, Arduino IDE compile times can take several minutes.
 - [tools/firmware/flash.ps1](./tools/firmware/flash.ps1): upload while keeping pairing state
 - [tools/firmware/flash-clean.ps1](./tools/firmware/flash-clean.ps1): clean-flash upload for re-pair workflows
 - [tools/firmware/monitor.ps1](./tools/firmware/monitor.ps1): serial monitor with reconnect handling
-- [tools/firmware/serial-capture.ps1](./tools/firmware/serial-capture.ps1): short serial capture helper for diagnostics
+- [tools/firmware/serial-capture.ps1](./tools/firmware/serial-capture.ps1): short serial capture helper with optional timestamps and file logging
+- [tools/mqtt-capture.ps1](./tools/mqtt-capture.ps1): generic MQTT capture helper for Zigbee2MQTT bridge and device topics
 - [tools/z2m-join.ps1](./tools/z2m-join.ps1): Zigbee2MQTT join helper
 - [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
 - [docs/status-led.md](./docs/status-led.md): LED state documentation
@@ -215,9 +239,16 @@ That can be normal after reset or USB reconnect. Wait for the monitor to finish 
 
 Compare the visible LED pattern against [docs/status-led.md](./docs/status-led.md) and, if needed, verify it against serial output from `tools/firmware/monitor.ps1`.
 
+### The Device Rejoins But Zigbee2MQTT Does Not Interview It Cleanly
+
+Use the garage-oriented checklist in [docs/garage-debug-checklist.md](./docs/garage-debug-checklist.md). It walks through BLE debug build, clean Zigbee2MQTT interview setup, and parent-router sanity checks.
+
+If Zigbee2MQTT shows the device as supported but endpoint `10` still has empty `bindings` and `configured_reportings`, the interview finished but converter `configure()` did not run. A manual Zigbee2MQTT `reconfigure` will restore the metadata, but current firmware builds already send position updates directly to the coordinator so runtime status is still delivered.
+
 ## Further Documentation
 
 - [docs/status-led.md](./docs/status-led.md)
 - [docs/tag-layout.md](./docs/tag-layout.md)
 - [docs/z2m-setup.md](./docs/z2m-setup.md)
+- [docs/garage-debug-checklist.md](./docs/garage-debug-checklist.md)
 - [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md)

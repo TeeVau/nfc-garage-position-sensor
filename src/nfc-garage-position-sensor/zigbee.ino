@@ -1,4 +1,6 @@
 static constexpr uint16_t ZB_BASIC_SW_BUILD_ID_ATTR = 0x4000;
+static constexpr uint16_t ZB_COORDINATOR_SHORT_ADDR = 0x0000;
+static constexpr uint8_t ZB_COORDINATOR_ENDPOINT = 1;
 
 bool GarageZigbeeWindowCovering::setSoftwareBuildId(const char* buildId) {
   if (buildId == nullptr) {
@@ -26,6 +28,34 @@ bool GarageZigbeeWindowCovering::setSoftwareBuildId(const char* buildId) {
   esp_err_t ret = esp_zb_basic_cluster_add_attr(basicCluster, ZB_BASIC_SW_BUILD_ID_ATTR, (void*)zbBuildId);
   if (ret != ESP_OK) {
     log_e("Failed to add software build ID to basic cluster: 0x%x: %s", ret, esp_err_to_name(ret));
+    return false;
+  }
+
+  return true;
+}
+
+bool GarageZigbeeWindowCovering::reportLiftPercentage() {
+  esp_zb_zcl_report_attr_cmd_t report_attr_cmd;
+  memset(&report_attr_cmd, 0, sizeof(report_attr_cmd));
+
+  // Zigbee2MQTT can finish interview successfully yet still skip the converter
+  // configure() step. In that case bindings/reporting remain empty, so we send
+  // the report directly to the coordinator endpoint instead of relying on them.
+  report_attr_cmd.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+  report_attr_cmd.attributeID = ESP_ZB_ZCL_ATTR_WINDOW_COVERING_CURRENT_POSITION_LIFT_PERCENTAGE_ID;
+  report_attr_cmd.direction = ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI;
+  report_attr_cmd.clusterID = ESP_ZB_ZCL_CLUSTER_ID_WINDOW_COVERING;
+  report_attr_cmd.zcl_basic_cmd.src_endpoint = _endpoint;
+  report_attr_cmd.zcl_basic_cmd.dst_endpoint = ZB_COORDINATOR_ENDPOINT;
+  report_attr_cmd.zcl_basic_cmd.dst_addr_u.addr_short = ZB_COORDINATOR_SHORT_ADDR;
+  report_attr_cmd.manuf_code = ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC;
+
+  esp_zb_lock_acquire(portMAX_DELAY);
+  esp_err_t ret = esp_zb_zcl_report_attr_cmd_req(&report_attr_cmd);
+  esp_zb_lock_release();
+
+  if (ret != ESP_OK) {
+    log_e("Failed to report lift percentage: 0x%x: %s", ret, esp_err_to_name(ret));
     return false;
   }
 
@@ -126,6 +156,44 @@ void printZigbeeStatus() {
   printRouteTable();
 }
 
+void printRuntimeState(const char* source) {
+  char msg[64];
+
+  snprintf(
+    msg,
+    sizeof(msg),
+    "DBG %s up=%lus st=%u conn=%u rd=%u",
+    source,
+    millis() / 1000UL,
+    Zigbee.started() ? 1 : 0,
+    Zigbee.connected() ? 1 : 0,
+    zigbeeReady ? 1 : 0
+  );
+  logLine(msg);
+
+  snprintf(
+    msg,
+    sizeof(msg),
+    "DBG idx=%d pend=%d cnt=%u open=%u",
+    stableIndex,
+    pendingIndex,
+    pendingCount,
+    currentOpeningPercentage
+  );
+  logLine(msg);
+
+#if BLE_DEBUG_ENABLED
+  snprintf(
+    msg,
+    sizeof(msg),
+    "DBG ble cli=%u adv=%s",
+    bleClientConnected ? 1 : 0,
+    bleDeviceName
+  );
+  logLine(msg);
+#endif
+}
+
 void publishCurrentPosition(const char* source) {
   char msg[64];
 
@@ -143,9 +211,19 @@ void publishCurrentPosition(const char* source) {
 
   currentOpeningPercentage = indexToPercent(stableIndex);
   uint8_t zigbeeLiftPercent = openingPercentToZigbeeLiftPercent(currentOpeningPercentage);
-  zbCovering.setLiftPercentage(zigbeeLiftPercent);
+  bool setOk = zbCovering.setLiftPercentage(zigbeeLiftPercent);
+  bool reportOk = setOk && zbCovering.reportLiftPercentage();
 
-  snprintf(msg, sizeof(msg), "ZB open=%u lift=%u %s", currentOpeningPercentage, zigbeeLiftPercent, source);
+  snprintf(
+    msg,
+    sizeof(msg),
+    "ZB open=%u lift=%u %s set=%u rpt=%u",
+    currentOpeningPercentage,
+    zigbeeLiftPercent,
+    source,
+    setOk ? 1 : 0,
+    reportOk ? 1 : 0
+  );
   logLine(msg);
 }
 
@@ -215,11 +293,19 @@ void pollZigbee() {
   uint32_t now = millis();
 
   if (!Zigbee.started()) {
+    zigbeeStackStarted = false;
     if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
       lastZigbeeStatusMs = now;
       logLine("ZB wait start");
+      printRuntimeState("wait");
     }
     return;
+  }
+
+  if (!zigbeeStackStarted) {
+    zigbeeStackStarted = true;
+    logLine("ZB started");
+    printRuntimeState("start");
   }
 
   bool connected = Zigbee.connected();
@@ -229,14 +315,17 @@ void pollZigbee() {
     Serial.println();
     logLine("ZB up");
     printZigbeeStatus();
+    printRuntimeState("up");
     publishCurrentPosition("boot");
   } else if (!connected && zigbeeReady) {
     zigbeeReady = false;
     logLine("ZB down");
+    printRuntimeState("down");
   }
 
   if (now - lastZigbeeStatusMs >= ZB_STATUS_INTERVAL_MS) {
     lastZigbeeStatusMs = now;
     printZigbeeStatus();
+    printRuntimeState("tick");
   }
 }

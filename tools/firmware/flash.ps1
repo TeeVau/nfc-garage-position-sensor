@@ -2,7 +2,8 @@ param(
   [string]$Port = "COM3",
   [string]$Fqbn = "esp32:esp32:esp32c6:ZigbeeMode=ed,PartitionScheme=zigbee,CDCOnBoot=cdc",
   [string]$BuildRoot = ".arduino-build",
-  [string]$SketchDir = "src\nfc-garage-position-sensor"
+  [string]$SketchDir = "src\nfc-garage-position-sensor",
+  [switch]$EnableBleDebug
 )
 
 $arduinoCli = "C:\Program Files\Arduino IDE\resources\app\lib\backend\resources\arduino-cli.exe"
@@ -19,10 +20,19 @@ function Get-BuildPath([string]$BoardFqbn, [string]$Root) {
   return Join-Path $Root $safeName
 }
 
-$buildPath = Get-BuildPath -BoardFqbn $Fqbn -Root (Join-Path $repoRoot $BuildRoot)
+function Get-BuildVariant([bool]$BleDebugEnabled) {
+  if ($BleDebugEnabled) {
+    return "ble-debug"
+  }
+
+  return "standard"
+}
+
+$variant = Get-BuildVariant -BleDebugEnabled $EnableBleDebug.IsPresent
+$buildPath = Join-Path (Get-BuildPath -BoardFqbn $Fqbn -Root (Join-Path $repoRoot $BuildRoot)) $variant
 
 if (-not (Test-Path $buildPath)) {
-  Write-Error "Build-Pfad nicht gefunden: $buildPath. Bitte zuerst .\\tools\\firmware\\build.ps1 ausfuehren."
+  Write-Error "Build-Pfad nicht gefunden: $buildPath. Bitte zuerst .\\tools\\firmware\\build.ps1$(if ($EnableBleDebug) { ' -EnableBleDebug' }) ausfuehren."
   exit 1
 }
 
@@ -31,5 +41,6 @@ if (-not (Test-Path $sketchPath)) {
   exit 1
 }
 
+Write-Host "Build variant: $variant"
 Write-Host "Upload from build path: $buildPath"
 & $arduinoCli upload -p $Port --fqbn $Fqbn --build-path $buildPath $sketchPath

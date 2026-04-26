@@ -20,7 +20,9 @@ class ServerCallbacks : public NimBLEServerCallbacks {
 
   void onDisconnect(NimBLEServer* server, NimBLEConnInfo& connInfo, int reason) override {
     bleClientConnected = false;
-    Serial.println("BLE disc");
+    char msg[32];
+    snprintf(msg, sizeof(msg), "BLE disc %d", reason);
+    Serial.println(msg);
 
     NimBLEAdvertising* advertising = NimBLEDevice::getAdvertising();
     if (advertising == nullptr || !advertising->start()) {
@@ -87,7 +89,9 @@ void setupBleUart() {
     return;
   }
 
-  logLine("BLE adv");
+  char msg[64];
+  snprintf(msg, sizeof(msg), "BLE adv %s", bleDeviceName);
+  logLine(msg);
 }
 #else
 void logLine(const char* msg) {

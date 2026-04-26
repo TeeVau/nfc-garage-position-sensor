@@ -10,7 +10,9 @@ static constexpr const char* ZB_MFR = "TeeVau";
 static constexpr const char* ZB_MODEL = "nfc-garage-position-sensor";
 static constexpr const char* BLE_DEVICE_NAME = "garage-sensor";
 
+#ifndef BLE_DEBUG_ENABLED
 #define BLE_DEBUG_ENABLED 0
+#endif
 
 static constexpr uint32_t ZB_STATUS_INTERVAL_MS = 30000;
 // Keep all Zigbee channels enabled for fresh pairing. The ESP32-C6 stack can be

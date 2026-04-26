@@ -2,7 +2,8 @@ param(
   [string]$Fqbn = "esp32:esp32:esp32c6:ZigbeeMode=ed,PartitionScheme=zigbee,CDCOnBoot=cdc",
   [string]$OutputDir = "build",
   [string]$BuildRoot = ".arduino-build",
-  [string]$SketchDir = "src\nfc-garage-position-sensor"
+  [string]$SketchDir = "src\nfc-garage-position-sensor",
+  [switch]$EnableBleDebug
 )
 
 $arduinoCli = "C:\Program Files\Arduino IDE\resources\app\lib\backend\resources\arduino-cli.exe"
@@ -19,9 +20,18 @@ function Get-BuildPath([string]$BoardFqbn, [string]$Root) {
   return Join-Path $Root $safeName
 }
 
+function Get-BuildVariant([bool]$BleDebugEnabled) {
+  if ($BleDebugEnabled) {
+    return "ble-debug"
+  }
+
+  return "standard"
+}
+
 $buildRootPath = Join-Path $repoRoot $BuildRoot
-$outputDirPath = Join-Path $repoRoot $OutputDir
-$buildPath = Get-BuildPath -BoardFqbn $Fqbn -Root $buildRootPath
+$variant = Get-BuildVariant -BleDebugEnabled $EnableBleDebug.IsPresent
+$outputDirPath = Join-Path (Join-Path $repoRoot $OutputDir) $variant
+$buildPath = Join-Path (Get-BuildPath -BoardFqbn $Fqbn -Root $buildRootPath) $variant
 New-Item -ItemType Directory -Force -Path $buildPath | Out-Null
 New-Item -ItemType Directory -Force -Path $outputDirPath | Out-Null
 
@@ -31,4 +41,19 @@ if (-not (Test-Path $sketchPath)) {
 }
 
 Write-Host "Build path: $buildPath"
-& $arduinoCli compile --fqbn $Fqbn --build-path $buildPath --output-dir $outputDirPath $sketchPath
+Write-Host "Build variant: $variant"
+
+$compileArgs = @(
+  "compile",
+  "--fqbn", $Fqbn,
+  "--build-path", $buildPath,
+  "--output-dir", $outputDirPath
+)
+
+if ($EnableBleDebug) {
+  $compileArgs += @("--build-property", "compiler.cpp.extra_flags=-DBLE_DEBUG_ENABLED=1")
+}
+
+$compileArgs += $sketchPath
+
+& $arduinoCli @compileArgs

@@ -1,6 +1,8 @@
 void handleShortButtonPress() {
   logLine("BTN short");
+  printRuntimeState("btn");
   printZigbeeStatus();
+  publishCurrentPosition("btn");
 }
 
 void pollButton() {

@@ -31,6 +31,7 @@ public:
   using ZigbeeWindowCovering::ZigbeeWindowCovering;
 
   bool setSoftwareBuildId(const char* buildId);
+  bool reportLiftPercentage();
 };
 
 GarageZigbeeWindowCovering zbCovering(ZIGBEE_COVERING_ENDPOINT);
@@ -46,6 +47,7 @@ NimBLECharacteristic* pTxCharacteristic = nullptr;
 bool bleClientConnected = false;
 #endif
 bool zigbeeReady = false;
+bool zigbeeStackStarted = false;
 
 uint8_t lastSeenUid[MAX_UID_LENGTH] = {0};
 uint8_t lastSeenUidLength = 0;
@@ -64,6 +66,8 @@ void setupBleUart();
 void setupZigbee();
 void pollZigbee();
 void pollButton();
+void printRuntimeState(const char* source);
+void publishCurrentPosition(const char* source);
 void setupStatusLed();
 void pollStatusLed();
 void setStatusLedError();
