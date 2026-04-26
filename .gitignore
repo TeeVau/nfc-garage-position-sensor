@@ -3,3 +3,7 @@ build-test/
 .arduino-build/
 .agents/
 serial.log
+docs/router-capacity-test-*/
+docs/z2m-dump-*/
+docs/*handoff*.json
+docs/garage-debug-checklist.md

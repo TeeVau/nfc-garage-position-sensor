@@ -164,7 +164,7 @@ On this machine, Arduino IDE compile times can take several minutes.
 
 - `src/nfc-garage-position-sensor`: firmware sketch and local source files
 - `tools/firmware`: build, flash, monitor, and serial-capture helpers
-- `docs`: user-facing setup notes, diagnostics, and validation artifacts
+- `docs`: user-facing setup notes and validation-oriented documentation
 - `zigbee2mqtt`: repository-owned Zigbee2MQTT converter files
 - `Documents`: functional specification and longer-form project documentation
 

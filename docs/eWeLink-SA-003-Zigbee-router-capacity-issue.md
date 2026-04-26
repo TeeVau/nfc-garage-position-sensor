@@ -8,11 +8,11 @@ Das ist relevant, weil ein ESP32-C6 Zigbee End Device beim Join/Rejoin einen Par
 
 ## Betroffene Router
 
-Aus `zigbee2mqtt/bridge/devices`:
+Aus einer lokalen Zigbee2MQTT-Installation, fuer die Veroeffentlichung anonymisiert:
 
 ```text
 USB_Repeater1
-ieee:         0x00124b000622de59
+ieee:         0x00124b0006xxxxxx
 nwk:          0x92C8
 network addr: 37576
 manufacturer: eWeLink
@@ -22,7 +22,7 @@ date_code:    20210703
 power_source: Mains (single phase)
 
 USB_Repeater2
-ieee:         0x00124b00061ff2e5
+ieee:         0x00124b0006xxxxxx
 nwk:          0xCDD5
 manufacturer: eWeLink
 model_id:     SA-003-Zigbee
@@ -35,7 +35,7 @@ Vergleichsrouter:
 
 ```text
 USB_Repeater3
-ieee:         0xa4c138d294ab5f73
+ieee:         0xa4c138d294xxxxxx
 nwk:          0x3F91
 manufacturer: HOBEIAN
 model_id:     CK-BL702-ROUTER-01(7018)
@@ -69,7 +69,7 @@ Das ESP32-C6-Scan-Beispiel sieht das Zigbee2MQTT-Netz:
 ```text
 PAN ID:          0xaae1
 Channel:         15
-Extended PAN ID: 96:e3:c7:4d:11:90:05:aa
+Extended PAN ID: redacted-for-public-repo
 ```
 
 Bei aktivem Permit Join via Coordinator oder via `USB_Repeater1` wurde beobachtet:
@@ -94,7 +94,7 @@ Der eWeLink `SA-003-Zigbee` mit Firmware `1.0.7 / 20210703` routet zwar im Mesh,
 
 Der ESP32-C6-Scan listet Netzwerke nach PAN/Extended PAN, zeigt aber nicht eindeutig, welcher konkrete Router das Beacon geliefert hat. Wenn mehrere Router im gleichen PAN senden, kann dieselbe PAN-Zeile je nach gehoertem Beacon unterschiedliche Capacity-Werte zeigen.
 
-Das erklaert Beobachtungen, bei denen `0xaae1` gelegentlich `Yes/Yes`, danach aber wieder `No/No` zeigt. Vermutlich stammen diese Scans von unterschiedlichen Routern im gleichen Netz.
+Das erklaert Beobachtungen, bei denen dieselbe PAN gelegentlich `Yes/Yes`, danach aber wieder `No/No` zeigt. Vermutlich stammen diese Scans von unterschiedlichen Routern im gleichen Netz.
 
 ## Relevanz fuer das eigentliche Problem
 

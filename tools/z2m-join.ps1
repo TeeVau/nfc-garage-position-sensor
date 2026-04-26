@@ -40,7 +40,7 @@ param(
     [string]$State = "status",
 
     [Alias("Server")]
-    [string]$BrokerHost = $(if ($env:Z2M_MQTT_HOST) { $env:Z2M_MQTT_HOST } else { "192.168.178.2" }),
+    [string]$BrokerHost = $(if ($env:Z2M_MQTT_HOST) { $env:Z2M_MQTT_HOST } else { "localhost" }),
 
     [int]$Port = $(if ($env:Z2M_MQTT_PORT) { [int]$env:Z2M_MQTT_PORT } else { 1883 }),
 
