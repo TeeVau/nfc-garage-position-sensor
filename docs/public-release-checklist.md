@@ -10,8 +10,8 @@ This checklist tracks the remaining work before switching the repository to publ
 - [x] Replace the Zigbee2MQTT helper's private default broker host with a neutral default
 - [x] Re-scan the current branch for obvious private paths, host addresses, and dump content
 - [x] Add an explicit `LICENSE`
-- [ ] Rewrite Git history to remove previously pushed diagnostics and dump artifacts
-- [ ] Perform a final visibility review after the history rewrite
+- [x] Rewrite Git history to remove previously pushed diagnostics and dump artifacts
+- [x] Perform a final visibility review after the history rewrite
 
 ## Checklist
 
@@ -48,15 +48,15 @@ This checklist tracks the remaining work before switching the repository to publ
 
 - [x] Decide whether a history rewrite is needed
 - [x] Confirm that a history rewrite is needed because previously pushed diagnostics and dumps still exist in older commits
-- [ ] Remove the affected paths from Git history
-- [ ] Validate that the cleaned history no longer exposes the removed files
-- [ ] Force-push the rewritten branch
+- [x] Remove the affected paths from Git history
+- [x] Validate that the cleaned history no longer exposes the removed files
+- [x] Force-push the rewritten branch
 
 ### Final Go-Live Check
 
 - [ ] `git status` is clean
 - [x] No sensitive diagnostics or dump files remain in the current branch
-- [ ] No sensitive diagnostics or dump files remain in Git history
+- [x] No sensitive diagnostics or dump files remain in Git history
 - [x] License file exists in the repository root
 - [x] `README.md` and project docs are consistent with the current repository structure
 - [ ] Only then switch the repository visibility to public
