@@ -1,8 +1,21 @@
 # NFC Garage Position Sensor
 
-ESP32-C6 firmware for a garage door position sensor based on fixed PN532 NFC tags and Zigbee reporting.
+![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)
+![Platform: ESP32-C6](https://img.shields.io/badge/platform-ESP32--C6-1f2937)
+![Protocol: Zigbee](https://img.shields.io/badge/protocol-Zigbee-f4b400)
+![Sensor: PN532 NFC](https://img.shields.io/badge/sensor-PN532-0891b2)
+![Status: Prototype](https://img.shields.io/badge/status-field--tested%20prototype-15803d)
 
-The device reads NFC tag UIDs, confirms a stable door position, converts that into a logical opening percentage, and exposes the result to Zigbee2MQTT as a Window Covering device. In parallel, the onboard WS2812 LED provides direct local status feedback for boot, startup/join, ready, closed, open, and error states.
+ESP32-C6 firmware that reads fixed PN532 NFC tags and reports a garage door's opening percentage to Zigbee2MQTT over Zigbee.
+
+![NFC garage position sensor hero](docs/assets/github-social-preview.png)
+
+## Quick Start
+
+1. Build the firmware with `.\tools\firmware\build.ps1`.
+2. Flash the device with `.\tools\firmware\flash.ps1`, or use `.\tools\firmware\flash-clean.ps1` for a fresh Zigbee join.
+3. Pair it in Zigbee2MQTT and use [`zigbee2mqtt/external_converters/nfc-garage-position-sensor.js`](./zigbee2mqtt/external_converters/nfc-garage-position-sensor.js) if metadata or reporting is incomplete.
+4. Validate the `0 %` and `100 %` tags, then verify LED behavior and payloads with [docs/status-led.md](./docs/status-led.md), [docs/tag-layout.md](./docs/tag-layout.md), and [docs/z2m-setup.md](./docs/z2m-setup.md).
 
 ## Overview
 
