@@ -1,0 +1,74 @@
+MQTT2_DEVICE example for the NFC garage position sensor via Zigbee2MQTT
+======================================================================
+
+Expected Zigbee2MQTT payload on the device topic:
+
+  {"position":0,"state":"CLOSE"}
+  {"position":100,"state":"OPEN"}
+
+Example using friendly name ga_Torsensor and default base topic zigbee2mqtt:
+
+define ga_Torsensor MQTT2_DEVICE ga_Torsensor
+attr ga_Torsensor DbLogInclude position
+attr ga_Torsensor alias Garagentor Positionssensor
+attr ga_Torsensor devStateIcon {\
+  my $avail = ReadingsVal($name,'availability','online');; \
+  my $icon;; \
+  if($avail ne 'online') {\
+    $icon = 'fts_garage@red';; \
+  } else {\
+    my $pos = ReadingsNum($name,'position',0);; \
+    $pos = 0 if $pos < 0;; \
+    $pos = 100 if $pos > 100;; \
+    my $step = int(($pos + 5) / 10) * 10;; \
+    my $iconStep = 100 - $step;; \
+    $iconStep = 10 if $iconStep < 10;; \
+    $iconStep = 100 if $iconStep > 100;; \
+    $icon = 'fts_garage_door_' . $iconStep;; \
+  }\
+  return '<div style="display:flex;;align-items:center;;gap:6px;;">' .\
+         FW_makeImage($icon) .\
+         '<span>' . InternalVal($name,'STATE','') . '</span></div>';;\
+}
+attr ga_Torsensor devicetopic zigbee2mqtt/ga_Torsensor
+attr ga_Torsensor icon fts_garage
+attr ga_Torsensor readingList $DEVICETOPIC:.* { json2nameValue($EVENT) }\
+$DEVICETOPIC/availability:.* { $EVENT =~ /"state"\s*:\s*"([^"]+)"/ ? {availability => $1} : {availability => $EVENT} }
+attr ga_Torsensor room Garage
+attr ga_Torsensor stateFormat state (position %)
+
+Minimal attrTemplate snippet for a custom FHEM template file:
+
+name:nfc_garage_position_sensor_z2m
+filter:TYPE=MQTT2_DEVICE
+desc:NFC garage position sensor via Zigbee2MQTT with position/state JSON payload
+par:DEVICETOPIC;Full Zigbee2MQTT topic of the device;zigbee2mqtt/ga_Torsensor
+attr DEVICE DbLogInclude position
+attr DEVICE alias Garagentor Positionssensor
+attr DEVICE devStateIcon {\
+  my $avail = ReadingsVal($name,'availability','online');; \
+  my $icon;; \
+  if($avail ne 'online') {\
+    $icon = 'fts_garage@red';; \
+  } else {\
+    my $pos = ReadingsNum($name,'position',0);; \
+    $pos = 0 if $pos < 0;; \
+    $pos = 100 if $pos > 100;; \
+    my $step = int(($pos + 5) / 10) * 10;; \
+    my $iconStep = 100 - $step;; \
+    $iconStep = 10 if $iconStep < 10;; \
+    $iconStep = 100 if $iconStep > 100;; \
+    $icon = 'fts_garage_door_' . $iconStep;; \
+  }\
+  return '<div style="display:flex;;align-items:center;;gap:6px;;">' .\
+         FW_makeImage($icon) .\
+         '<span>' . InternalVal($name,'STATE','') . '</span></div>';;\
+}
+attr DEVICE devicetopic DEVICETOPIC
+attr DEVICE icon fts_garage
+attr DEVICE readingList $DEVICETOPIC:.* { json2nameValue($EVENT) }\
+$DEVICETOPIC/availability:.* { $EVENT =~ /"state"\s*:\s*"([^"]+)"/ ? {availability => $1} : {availability => $EVENT} }
+attr DEVICE room Garage
+attr DEVICE stateFormat state (position %)
+attr DEVICE model zigbee2mqtt_nfc_garage_position_sensor
+setreading DEVICE attrTemplateVersion 20260430

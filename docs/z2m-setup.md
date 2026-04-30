@@ -208,3 +208,84 @@ If FHEM consumes the Zigbee2MQTT MQTT payload, you should eventually see fields 
 - `ga_Torsensor_state = OPEN | CLOSE`
 
 The exact FHEM reading names depend on your MQTT mapping.
+
+Example `MQTT2_DEVICE` setup for a Zigbee2MQTT friendly name `ga_Torsensor`:
+
+```text
+define ga_Torsensor MQTT2_DEVICE ga_Torsensor
+attr ga_Torsensor DbLogInclude position
+attr ga_Torsensor alias Garagentor Positionssensor
+attr ga_Torsensor devStateIcon {\
+  my $avail = ReadingsVal($name,'availability','online');; \
+  my $icon;; \
+  if($avail ne 'online') {\
+    $icon = 'fts_garage@red';; \
+  } else {\
+    my $pos = ReadingsNum($name,'position',0);; \
+    $pos = 0 if $pos < 0;; \
+    $pos = 100 if $pos > 100;; \
+    my $step = int(($pos + 5) / 10) * 10;; \
+    my $iconStep = 100 - $step;; \
+    $iconStep = 10 if $iconStep < 10;; \
+    $iconStep = 100 if $iconStep > 100;; \
+    $icon = 'fts_garage_door_' . $iconStep;; \
+  }\
+  return '<div style="display:flex;;align-items:center;;gap:6px;;">' .\
+         FW_makeImage($icon) .\
+         '<span>' . InternalVal($name,'STATE','') . '</span></div>';;\
+}
+attr ga_Torsensor devicetopic zigbee2mqtt/ga_Torsensor
+attr ga_Torsensor icon fts_garage
+attr ga_Torsensor readingList $DEVICETOPIC:.* { json2nameValue($EVENT) }\
+$DEVICETOPIC/availability:.* { $EVENT =~ /"state"\s*:\s*"([^"]+)"/ ? {availability => $1} : {availability => $EVENT} }
+attr ga_Torsensor room Garage
+attr ga_Torsensor stateFormat state (position %)
+```
+
+Notes:
+
+- The device is intentionally modeled as read-only in this project, so no `setList` is required.
+- Live broker captures for this project show `zigbee2mqtt/ga_Torsensor` payloads like `{"last_seen":"...","linkquality":200,"position":22,"state":"OPEN"}`.
+- `zigbee2mqtt/ga_Torsensor/availability` is a separate topic with `{"state":"online"}` and should not overwrite the main `state` reading.
+- The tested FHEM variant keeps the standard Zigbee2MQTT reading name `linkquality` and does not use `jsonMap`.
+- `devStateIcon` returns HTML so FHEM shows both the icon and the `stateFormat` text in one line.
+- `devStateIcon` maps `position` to the `fts_garage_door_xx` icon series. Because the icon set uses `10 = open` and `100 = closed`, the mapping is intentionally inverted relative to the reported `position`.
+- If your Zigbee2MQTT base topic or friendly name differs, replace the `devicetopic` value accordingly.
+
+Minimal local attrTemplate snippet for your own FHEM template file:
+
+```text
+name:nfc_garage_position_sensor_z2m
+filter:TYPE=MQTT2_DEVICE
+desc:NFC garage position sensor via Zigbee2MQTT with position/state JSON payload
+par:DEVICETOPIC;Full Zigbee2MQTT topic of the device;zigbee2mqtt/ga_Torsensor
+attr DEVICE DbLogInclude position
+attr DEVICE alias Garagentor Positionssensor
+attr DEVICE devStateIcon {\
+  my $avail = ReadingsVal($name,'availability','online');; \
+  my $icon;; \
+  if($avail ne 'online') {\
+    $icon = 'fts_garage@red';; \
+  } else {\
+    my $pos = ReadingsNum($name,'position',0);; \
+    $pos = 0 if $pos < 0;; \
+    $pos = 100 if $pos > 100;; \
+    my $step = int(($pos + 5) / 10) * 10;; \
+    my $iconStep = 100 - $step;; \
+    $iconStep = 10 if $iconStep < 10;; \
+    $iconStep = 100 if $iconStep > 100;; \
+    $icon = 'fts_garage_door_' . $iconStep;; \
+  }\
+  return '<div style="display:flex;;align-items:center;;gap:6px;;">' .\
+         FW_makeImage($icon) .\
+         '<span>' . InternalVal($name,'STATE','') . '</span></div>';;\
+}
+attr DEVICE devicetopic DEVICETOPIC
+attr DEVICE icon fts_garage
+attr DEVICE readingList $DEVICETOPIC:.* { json2nameValue($EVENT) }\
+$DEVICETOPIC/availability:.* { $EVENT =~ /"state"\s*:\s*"([^"]+)"/ ? {availability => $1} : {availability => $EVENT} }
+attr DEVICE room Garage
+attr DEVICE stateFormat state (position %)
+attr DEVICE model zigbee2mqtt_nfc_garage_position_sensor
+setreading DEVICE attrTemplateVersion 20260430
+```

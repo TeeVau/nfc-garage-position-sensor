@@ -131,7 +131,7 @@ function Resolve-Topics {
         $topics.Add("$baseTopicClean/$DeviceId")
     }
 
-    $topics | Select-Object -Unique
+    @($topics | Select-Object -Unique)
 }
 
 function Ensure-ParentDirectory {
@@ -159,7 +159,7 @@ if ($ForgetCredential) {
     Remove-StoredCredential -Path $credentialPath
 }
 
-$topics = Resolve-Topics
+$topics = @(Resolve-Topics)
 if ($topics.Count -eq 0) {
     throw "Es wurde kein MQTT-Topic ausgewaehlt."
 }

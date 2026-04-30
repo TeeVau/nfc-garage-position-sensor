@@ -117,6 +117,22 @@ If Zigbee2MQTT needs help classifying the device, use the repository-provided ex
 
 For the full pairing, metadata, and expected payload behavior, see [docs/z2m-setup.md](./docs/z2m-setup.md).
 
+### FHEM Integration
+
+When FHEM consumes the Zigbee2MQTT MQTT stream, use the main device topic and the availability subtopic separately:
+
+- `zigbee2mqtt/ga_Torsensor`: main JSON payload such as `{"last_seen":"...","linkquality":196,"position":0,"state":"CLOSE"}`
+- `zigbee2mqtt/ga_Torsensor/availability`: availability JSON such as `{"state":"online"}`
+
+The repository includes a tested `MQTT2_DEVICE` example and attrTemplate snippet that:
+
+- uses `attr ... devicetopic zigbee2mqtt/ga_Torsensor`
+- keeps the standard Zigbee2MQTT reading name `linkquality`
+- maps the availability subtopic to a dedicated FHEM reading `availability`
+- renders both a garage-door icon and the formatted state text through `devStateIcon`
+
+See [docs/z2m-setup.md](./docs/z2m-setup.md) for the full FHEM configuration and [examples/fhem-mqtt2-device-template.txt](./examples/fhem-mqtt2-device-template.txt) for a copy/paste-ready example.
+
 ## Build, Flash, And Monitor
 
 The Arduino sketch now lives under `src/nfc-garage-position-sensor`, while the helper scripts for build, flash, and monitoring live under `tools/firmware`.
@@ -160,6 +176,12 @@ Short MQTT capture for Zigbee2MQTT bridge topics plus one device topic:
 
 ```powershell
 .\tools\mqtt-capture.ps1 -BrokerHost 192.168.178.2 -DeviceId 0x58e6c5fffedd775c -DurationSeconds 30 -OutputFile .\tmp\mqtt.log
+```
+
+Short MQTT capture for one explicit topic:
+
+```powershell
+.\tools\mqtt-capture.ps1 -BrokerHost 192.168.178.2 -Topic zigbee2mqtt/ga_Torsensor -DurationSeconds 5 -PassThru
 ```
 
 This uses a separate build variant so the normal and BLE-debug artifacts do not overwrite each other.
@@ -219,11 +241,12 @@ On this machine, Arduino IDE compile times can take several minutes.
 - [tools/firmware/flash-clean.ps1](./tools/firmware/flash-clean.ps1): clean-flash upload for re-pair workflows
 - [tools/firmware/monitor.ps1](./tools/firmware/monitor.ps1): serial monitor with reconnect handling
 - [tools/firmware/serial-capture.ps1](./tools/firmware/serial-capture.ps1): short serial capture helper with optional timestamps and file logging
-- [tools/mqtt-capture.ps1](./tools/mqtt-capture.ps1): generic MQTT capture helper for Zigbee2MQTT bridge and device topics
+- [tools/mqtt-capture.ps1](./tools/mqtt-capture.ps1): generic MQTT capture helper for Zigbee2MQTT bridge topics, explicit MQTT topics, and one device topic
 - [tools/z2m-join.ps1](./tools/z2m-join.ps1): Zigbee2MQTT join helper
 - [docs/tag-layout.md](./docs/tag-layout.md): UID order and percent mapping
 - [docs/status-led.md](./docs/status-led.md): LED state documentation
 - [docs/z2m-setup.md](./docs/z2m-setup.md): Zigbee2MQTT setup and expectations
+- [examples/fhem-mqtt2-device-template.txt](./examples/fhem-mqtt2-device-template.txt): tested FHEM `MQTT2_DEVICE` example and local attrTemplate snippet
 - [Documents/nfc-garage-position-sensor-fsd.md](./Documents/nfc-garage-position-sensor-fsd.md): functional specification document
 
 ## Troubleshooting

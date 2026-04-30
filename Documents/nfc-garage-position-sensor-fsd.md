@@ -15,6 +15,7 @@ The system is intended to provide reliable local door-position feedback without 
 - Device maintainer / firmware developer
 - Local homeowner or operator
 - Home automation consumers via Zigbee2MQTT or MQTT-based integrations
+- FHEM users consuming Zigbee2MQTT MQTT topics
 
 ### Goals
 
@@ -181,6 +182,7 @@ Dependencies:
 - FR-1.12 [Should]: The system should support a local factory reset through a long button press.
 - FR-1.13 [Should]: The system should keep serial diagnostics available for runtime debugging.
 - FR-1.14 [May]: The system may provide optional BLE debug notifications when enabled at build time.
+- FR-1.15 [Should]: The project documentation should provide a tested FHEM `MQTT2_DEVICE` example that consumes the Zigbee2MQTT main topic and availability subtopic separately.
 
 ### 4.2 Non-Functional Requirements (NFR)
 
@@ -234,6 +236,8 @@ Dependencies:
 | Zigbee Window Covering endpoint 10 | Outbound | Position/state reporting | End-device mode |
 | Serial USB | Outbound | Diagnostics and runtime logs | 115200 baud |
 | Onboard WS2812 LED | Outbound | Local device status | Human-visible runtime state |
+| Zigbee2MQTT MQTT device topic | Outbound via Zigbee2MQTT | Home automation consumption in FHEM or other MQTT clients | Main payload includes `position`, `state`, `linkquality`, and `last_seen` |
+| Zigbee2MQTT MQTT availability subtopic | Outbound via Zigbee2MQTT | Online/offline indication for MQTT consumers | JSON payload uses `{"state":"online|offline"}` semantics |
 
 ### 6.2 Internal Interfaces
 
@@ -253,6 +257,7 @@ Dependencies:
 | `position` | Project semantic | Opening percentage, `0 = closed`, `100 = open` |
 | `lift` | Zigbee cluster-facing value | Inverted internal lift percentage for window covering reporting |
 | `swBuildId` | Basic cluster | Firmware-ID for Zigbee2MQTT |
+| `availability.state` | Zigbee2MQTT availability subtopic | Online/offline indication intended for a dedicated consumer-side availability reading |
 
 ### 6.4 Commands / Opcodes
 
@@ -289,6 +294,7 @@ Dependencies:
 - Use serial monitor for detailed logs
 - Use the LED when a serial console is not available
 - Re-pair in Zigbee2MQTT after significant endpoint or metadata changes
+- For FHEM, subscribe to the main Zigbee2MQTT device topic and the `/availability` subtopic separately to avoid overwriting the cover `state` reading with online/offline state
 - For each production firmware release, assign a Semantic Versioning 2.0.0 version
 - Record release notes in `CHANGELOG.md` using Keep a Changelog section structure
 
@@ -322,6 +328,7 @@ Dependencies:
 | TC-2.8 | Error LED state | Force PN532 or Zigbee startup failure in a controlled test | Red blink pattern appears |
 | TC-2.9 | Release versioning | Review the release artifact version string for a production release | Version follows `MAJOR.MINOR.PATCH` without additional format deviations |
 | TC-2.10 | Release history documentation | Review `CHANGELOG.md` for a production release | File exists and release entries follow the Keep a Changelog structure |
+| TC-2.11 | FHEM MQTT mapping | Apply the documented `MQTT2_DEVICE` example to the Zigbee2MQTT topics | `position`, `state`, `linkquality`, and `availability` update as intended and `devStateIcon` shows icon plus text |
 
 ### 8.3 Acceptance Tests
 
@@ -347,6 +354,7 @@ Dependencies:
 | FR-1.12 | Should | TC-1.3, AT-1 | Covered |
 | FR-1.13 | Should | TC-1.3 | Covered |
 | FR-1.14 | May | --- | Optional |
+| FR-1.15 | Should | TC-2.11 | Covered |
 | NFR-1.1 | Must | TC-1.1 | Covered |
 | NFR-1.2 | Must | TC-2.3, TC-2.6 | Covered |
 | NFR-1.3 | Must | TC-2.6, TC-2.7 | Covered |
@@ -366,6 +374,7 @@ Dependencies:
 | Blue startup indicator is not visible | Startup state too short or board not using onboard RGB LED | Power-cycle and inspect early boot visually | Keep `STATUS_LED_STARTUP_VISIBLE_MS` non-zero |
 | No local LED activity | Board macro or RGB LED path unavailable | Check core support for `RGB_BUILTIN` and serial logs | Verify board/core setup and onboard LED support |
 | Position jumps unexpectedly | Neighboring tags read during movement | Inspect `TAG` logs near the transition | Re-check physical tag spacing or confirmation count |
+| FHEM shows `online` or `offline` as the cover `state` | Main topic and availability subtopic were mapped to the same reading | Inspect the `MQTT2_DEVICE` readingList and check the `availability` reading separately | Map `$DEVICETOPIC/availability` to a dedicated `availability` reading |
 
 ## 10. Appendix
 
