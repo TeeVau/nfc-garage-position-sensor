@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Public maker-facing hardware setup, assembly, BOM, and quick verification documentation.
+- SVG wiring and pinout assets under `docs/assets/`.
+- Community repo metadata including issue templates, a pull request template, and contribution/security guidance.
+
+### Changed
+
+- Moved the functional specification document to `docs/nfc-garage-position-sensor-fsd.md`.
+- Refocused the README toward a stable public release and maker-friendly onboarding.
+
+### Removed
+
+- Public release-process and garage-only debug checklist documents from the public repo surface.
+
 ## [0.4.0] - 2026-05-01
 
 ### Added

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="700" viewBox="0 0 900 700">
+  <rect width="900" height="700" fill="#f3f6f4"/>
+  <text x="60" y="70" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">ESP32-C6 Pinout Used By This Project</text>
+  <text x="60" y="108" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#4b5563">Only the pins used by the released firmware are highlighted.</text>
+
+  <rect x="280" y="150" width="340" height="460" rx="28" fill="#ffffff" stroke="#1f2937" stroke-width="3"/>
+  <text x="350" y="205" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#1f2937">ESP32-C6 Dev Board</text>
+
+  <g font-family="Consolas, monospace" font-size="22" fill="#111827">
+    <text x="120" y="280">GPIO20  SCK</text>
+    <text x="120" y="345">GPIO19  MISO</text>
+    <text x="120" y="410">GPIO18  MOSI</text>
+    <text x="120" y="475">GPIO14  SS</text>
+    <text x="120" y="540">GPIO9   Button</text>
+  </g>
+
+  <g stroke="#9ca3af" stroke-width="4" fill="none">
+    <line x1="280" y1="270" x2="220" y2="270"/>
+    <line x1="280" y1="335" x2="220" y2="335"/>
+    <line x1="280" y1="400" x2="220" y2="400"/>
+    <line x1="280" y1="465" x2="220" y2="465"/>
+    <line x1="280" y1="530" x2="220" y2="530"/>
+  </g>
+
+  <g>
+    <circle cx="280" cy="270" r="10" fill="#2563eb"/>
+    <circle cx="280" cy="335" r="10" fill="#dc2626"/>
+    <circle cx="280" cy="400" r="10" fill="#f59e0b"/>
+    <circle cx="280" cy="465" r="10" fill="#7c3aed"/>
+    <circle cx="280" cy="530" r="10" fill="#16a34a"/>
+  </g>
+
+  <g font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#374151">
+    <text x="660" y="280">GPIO20: PN532 SPI clock</text>
+    <text x="660" y="345">GPIO19: PN532 data to ESP32-C6</text>
+    <text x="660" y="410">GPIO18: PN532 data from ESP32-C6</text>
+    <text x="660" y="475">GPIO14: PN532 chip select</text>
+    <text x="660" y="540">GPIO9: onboard diagnostics button</text>
+  </g>
+
+  <text x="60" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="18" fill="#4b5563">The onboard WS2812 LED is accessed through the board support package and does not require an extra external pin connection.</text>
+</svg>

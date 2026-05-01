@@ -103,14 +103,6 @@ function Get-CredentialStorePath {
     Join-Path $storeDir "$safeName.credential.xml"
 }
 
-function Get-AquariumCredentialStorePath {
-    param([Parameter(Mandatory = $true)][string]$Name)
-
-    $safeName = $Name -replace "[^A-Za-z0-9._-]", "_"
-    $storeDir = Join-Path $env:LOCALAPPDATA "aquarium-cooling-controller\mqtt"
-    Join-Path $storeDir "$safeName.credential.xml"
-}
-
 function Convert-SecureStringToPlainText {
     param([Parameter(Mandatory = $true)][securestring]$SecureString)
 
@@ -234,13 +226,10 @@ function Write-BridgeInfoStatus {
 }
 
 $defaultCredentialPath = Get-CredentialStorePath -Name $CredentialName
-$fallbackCredentialPath = Get-AquariumCredentialStorePath -Name $CredentialName
 $credentialPath = if (-not [string]::IsNullOrWhiteSpace($CredentialPath)) {
     $CredentialPath
 } elseif (Test-Path -LiteralPath $defaultCredentialPath) {
     $defaultCredentialPath
-} elseif (Test-Path -LiteralPath $fallbackCredentialPath) {
-    $fallbackCredentialPath
 } else {
     $defaultCredentialPath
 }
