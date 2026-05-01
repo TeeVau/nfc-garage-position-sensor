@@ -21,13 +21,14 @@ The system is intended to provide reliable local door-position feedback without 
 
 - Report door opening percentage in the project semantic `0 = closed`, `100 = open`
 - Expose compatible Zigbee metadata and attributes for Zigbee2MQTT
+- Keep live Zigbee position delivery reliable even when Zigbee2MQTT skips converter `configure()`
 - Provide a visible local status indication for boot, startup/join, ready, closed, open, and error states
 - Keep field diagnostics possible without BLE or a permanently attached serial monitor
 
 ### Non-Goals
 
 - Motor control of the garage door
-- Zigbee OTA firmware updates
+- Wi-Fi / HTTP OTA firmware updates
 - Rich UI, mobile app, or cloud backend
 
 ### High-Level System Flow
@@ -44,7 +45,7 @@ The system is intended to provide reliable local door-position feedback without 
 
 - NFC acquisition subsystem: PN532 over SPI reads passive tags
 - Position state subsystem: `pendingIndex` and `stableIndex` confirm a valid door position
-- Zigbee publishing subsystem: local `ZigbeeWindowCovering` extension exposes the door position and firmware metadata
+- Zigbee publishing subsystem: local `ZigbeeWindowCovering` extension exposes the door position, firmware metadata, and direct runtime reporting
 - Diagnostics subsystem: serial logs, optional BLE UART, and the onboard WS2812 status LED
 
 ### 2.2 Hardware / Platform Architecture
@@ -82,9 +83,10 @@ Persistence / storage:
 Update model:
 
 - USB flashing through `arduino-cli`
+- Build helper emits versioned local release binaries into `bin/`
 - Production firmware releases use Semantic Versioning 2.0.0 (`MAJOR.MINOR.PATCH`)
 - Firmware release history is maintained in `CHANGELOG.md` using the Keep a Changelog format
-- OTA over temporary Wi-Fi AP is deferred for a future phase
+- No Wi-Fi / HTTP OTA update path is part of the released scope
 
 ## 3. Implementation Phases
 
@@ -141,28 +143,31 @@ Dependencies:
 - Valid tag layout
 - Joinable Zigbee network
 
-### 3.3 Phase 3 - Extensions / Enhancements
+### 3.3 Phase 3 - Field Validation And Release Hardening
 
 Scope:
 
-- OTA over temporary Wi-Fi AP
-- Finer-grained LED patterns for intermediate states or tag events
-- Additional recovery and service tooling
+- Finalize the physical 10-tag garage layout
+- Harden live Zigbee reporting against missing Zigbee2MQTT `configure()` runs
+- Add repeatable serial and MQTT capture helpers for field diagnostics
+- Package versioned local release binaries
 
 Deliverables:
 
-- Update mode specification
-- Extended maintenance workflow
+- Field-tested tag map and release documentation
+- Reliable live reporting during fresh pairing and rejoin scenarios
+- Reusable diagnostic capture workflow
 
 Exit criteria:
 
-- Update flow documented and tested
-- Recovery procedures validated
+- Fresh pairing and runtime reports work in the validated garage setup
+- Release documentation reflects the shipped USB-only maintenance workflow
+- Diagnostic capture flow is documented and repeatable
 
 Dependencies:
 
-- OTA-capable partition strategy
-- Security decision for temporary AP and updater page
+- Stable garage tag installation
+- Zigbee2MQTT validation environment
 
 ## 4. Functional Requirements
 
@@ -183,6 +188,7 @@ Dependencies:
 - FR-1.13 [Should]: The system should keep serial diagnostics available for runtime debugging.
 - FR-1.14 [May]: The system may provide optional BLE debug notifications when enabled at build time.
 - FR-1.15 [Should]: The project documentation should provide a tested FHEM `MQTT2_DEVICE` example that consumes the Zigbee2MQTT main topic and availability subtopic separately.
+- FR-1.16 [Must]: The system shall actively report live position updates so runtime state delivery does not depend on Zigbee2MQTT having stored `configured_reportings` for endpoint `10`.
 
 ### 4.2 Non-Functional Requirements (NFR)
 
@@ -273,6 +279,7 @@ Dependencies:
 1. Build with `.\tools\firmware\build.ps1`
 2. Upload with `.\tools\firmware\flash.ps1`
 3. Use `.\tools\firmware\flash-clean.ps1` only when a clean re-pair is required
+4. Use the versioned binary copied into `bin/` when a release artifact is needed for handoff or archival
 
 ### Provisioning / Configuration
 
@@ -297,6 +304,7 @@ Dependencies:
 - For FHEM, subscribe to the main Zigbee2MQTT device topic and the `/availability` subtopic separately to avoid overwriting the cover `state` reading with online/offline state
 - For each production firmware release, assign a Semantic Versioning 2.0.0 version
 - Record release notes in `CHANGELOG.md` using Keep a Changelog section structure
+- Use `tools/mqtt-capture.ps1` and `tools/firmware/serial-capture.ps1` for short reproducible field-debug captures
 
 ### Recovery
 
@@ -329,6 +337,7 @@ Dependencies:
 | TC-2.9 | Release versioning | Review the release artifact version string for a production release | Version follows `MAJOR.MINOR.PATCH` without additional format deviations |
 | TC-2.10 | Release history documentation | Review `CHANGELOG.md` for a production release | File exists and release entries follow the Keep a Changelog structure |
 | TC-2.11 | FHEM MQTT mapping | Apply the documented `MQTT2_DEVICE` example to the Zigbee2MQTT topics | `position`, `state`, `linkquality`, and `availability` update as intended and `devStateIcon` shows icon plus text |
+| TC-2.12 | Live reports without manual configure | Pair the device freshly in Zigbee2MQTT and move through known tags before any manual `device/configure` | Live `position` / `state` updates arrive from the device |
 
 ### 8.3 Acceptance Tests
 
@@ -355,6 +364,7 @@ Dependencies:
 | FR-1.13 | Should | TC-1.3 | Covered |
 | FR-1.14 | May | --- | Optional |
 | FR-1.15 | Should | TC-2.11 | Covered |
+| FR-1.16 | Must | TC-2.12 | Covered |
 | NFR-1.1 | Must | TC-1.1 | Covered |
 | NFR-1.2 | Must | TC-2.3, TC-2.6 | Covered |
 | NFR-1.3 | Must | TC-2.6, TC-2.7 | Covered |
@@ -370,6 +380,7 @@ Dependencies:
 | Symptom | Likely Cause | Diagnostic Steps | Corrective Action |
 |---------|-------------|-----------------|-------------------|
 | Device does not show Firmware-ID in Zigbee2MQTT | `swBuildId` not exposed or stale interview | Check fresh pairing and Zigbee interview | Re-pair and verify current firmware |
+| Zigbee2MQTT interviewed the device but no endpoint reporting is configured | Converter `configure()` was skipped or not persisted | Inspect device metadata and compare with live MQTT traffic | Live runtime updates should still arrive; use manual `device/configure` only if metadata or stored reporting needs cleanup |
 | Position appears inverted in Zigbee2MQTT | Consumer-side cover inversion | Check `invert_cover` setting | Keep `invert_cover = false` for this project |
 | Blue startup indicator is not visible | Startup state too short or board not using onboard RGB LED | Power-cycle and inspect early boot visually | Keep `STATUS_LED_STARTUP_VISIBLE_MS` non-zero |
 | No local LED activity | Board macro or RGB LED path unavailable | Check core support for `RGB_BUILTIN` and serial logs | Verify board/core setup and onboard LED support |

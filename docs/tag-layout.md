@@ -9,7 +9,7 @@ raw_percent = round(index * 100 / (TAG_COUNT - 1))
 percent = INDEX_INCREASES_WHEN_OPENING ? raw_percent : (100 - raw_percent)
 ```
 
-Current physical layout:
+Final field-tested physical layout:
 
 | Tag | Lamella | Index | Opening |
 | ---: | ------: | ----: | ------: |

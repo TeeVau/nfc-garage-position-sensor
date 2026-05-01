@@ -13,9 +13,9 @@ void setupNfc() {
   if (!versiondata) {
     logLine("ERR pn532");
     setStatusLedError();
-    while (true) {
-      delay(1000);
-    }
+//    while (true) {
+//      delay(1000);
+//    }
   }
 
   snprintf(msg, sizeof(msg), "PN532 0x%08lX", static_cast<unsigned long>(versiondata));

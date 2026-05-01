@@ -71,6 +71,7 @@ const char* roleCode(esp_zb_nwk_device_type_t role) {
   }
 }
 
+#if BLE_DEBUG_ENABLED
 void printIeeeLine(const char* label, const uint8_t* addr) {
   char msg[64];
   int len = snprintf(msg, sizeof(msg), "%s ", label);
@@ -129,14 +130,17 @@ void printRouteTable() {
     logLine("R none");
   }
 }
+#endif
 
 void printZigbeeStatus() {
   char msg[64];
+#if BLE_DEBUG_ENABLED
   esp_zb_ieee_addr_t ieee = {0};
   esp_zb_ieee_addr_t extPan = {0};
 
   esp_zb_get_long_address(ieee);
   esp_zb_get_extended_pan_id(extPan);
+#endif
 
   snprintf(
     msg,
@@ -150,10 +154,12 @@ void printZigbeeStatus() {
   );
   logLine(msg);
 
+#if BLE_DEBUG_ENABLED
   printIeeeLine("ZB ieee", ieee);
   printIeeeLine("ZB xpan", extPan);
   printNeighborTable();
   printRouteTable();
+#endif
 }
 
 void printRuntimeState(const char* source) {
@@ -192,6 +198,7 @@ void printRuntimeState(const char* source) {
   );
   logLine(msg);
 #endif
+
 }
 
 void publishCurrentPosition(const char* source) {
@@ -271,8 +278,12 @@ void setupZigbee() {
   Zigbee.addEndpoint(&zbCovering);
   logLine("ZB ep ok");
 
+#if BLE_DEBUG_ENABLED
   Zigbee.setDebugMode(true);
   logLine("ZB dbg on");
+#else
+  Zigbee.setDebugMode(false);
+#endif
 
   Zigbee.setPrimaryChannelMask(ZB_PRIMARY_CHANNEL_MASK);
   Zigbee.setTimeout(ZB_JOIN_TIMEOUT_MS);

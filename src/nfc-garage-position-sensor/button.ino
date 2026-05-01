@@ -25,7 +25,9 @@ void pollButton() {
     }
   }
 
-  if (!factoryResetTriggered) {
-    handleShortButtonPress();
+  if (factoryResetTriggered) {
+    return;
   }
+
+  handleShortButtonPress();
 }

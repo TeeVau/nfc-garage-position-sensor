@@ -4,9 +4,11 @@
 ![Platform: ESP32-C6](https://img.shields.io/badge/platform-ESP32--C6-1f2937)
 ![Protocol: Zigbee](https://img.shields.io/badge/protocol-Zigbee-f4b400)
 ![Sensor: PN532 NFC](https://img.shields.io/badge/sensor-PN532-0891b2)
-![Status: Prototype](https://img.shields.io/badge/status-field--tested%20prototype-15803d)
+![Status: Field Tested](https://img.shields.io/badge/status-field--tested-15803d)
 
 ESP32-C6 firmware that reads fixed PN532 NFC tags and reports a garage door's opening percentage to Zigbee2MQTT over Zigbee.
+
+Current release: `0.4.0`
 
 ![NFC garage position sensor hero](docs/assets/github-social-preview.png)
 
@@ -25,6 +27,7 @@ ESP32-C6 firmware that reads fixed PN532 NFC tags and reports a garage door's op
 - Local diagnostics: serial logs, onboard `WS2812` status LED
 - Optional diagnostics: BLE UART notifications when enabled
 - Position model: fixed UID order mapped to `0..100 %`
+- Update model: USB flash only, no Wi-Fi / HTTP OTA path
 
 The current runtime logic uses `pendingIndex` plus `pendingCount` to confirm a newly seen NFC tag before it becomes the next real position. That keeps the sketch responsive while reducing false transitions around neighboring tags.
 
@@ -33,9 +36,11 @@ The current runtime logic uses `pendingIndex` plus `pendingCount` to confirm a n
 - Reads passive NFC tags through the PN532 and maps them to door positions
 - Reports `position` and `state` over Zigbee with `0 = closed` and `100 = open`
 - Publishes both Basic `appVersion` and `swBuildId` so Zigbee2MQTT can resolve Firmware-ID correctly
+- Actively reports position updates so live state delivery does not depend on Zigbee2MQTT having completed converter `configure()`
 - Uses the ESP32-C6 onboard WS2812 LED for visible runtime status
 - Supports local Zigbee diagnostics and factory reset through the onboard button
 - Includes helper scripts for build, flash, clean flash, and serial monitoring
+- Generates versioned local release binaries under `bin/`
 
 ## Hardware
 
@@ -164,6 +169,13 @@ BLE debug build for garage-side testing:
 ```powershell
 .\tools\firmware\build.ps1 -EnableBleDebug
 .\tools\firmware\flash.ps1 -EnableBleDebug
+```
+
+Each build also copies a versioned local release binary into `bin/`, for example:
+
+```text
+bin/nfc-garage-position-sensor-0.4.0.bin
+bin/nfc-garage-position-sensor-0.4.0-ble-debug.bin
 ```
 
 Short serial capture with optional log file:

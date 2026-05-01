@@ -3,6 +3,7 @@
 #endif
 
 #include <Arduino.h>
+#include "config.h"
 #include <SPI.h>
 #include <cstring>
 #include <Adafruit_PN532.h>
@@ -11,7 +12,6 @@
 #endif
 #include "ZigbeeCore.h"
 #include "ep/ZigbeeWindowCovering.h"
-#include "config.h"
 
 extern "C" {
 #include "esp_zigbee_core.h"

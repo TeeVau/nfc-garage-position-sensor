@@ -4,8 +4,8 @@ static constexpr const char* PROJECT_NAME = "nfc-garage-position-sensor";
 // One shared version string keeps serial output and Zigbee2MQTT Firmware-ID in sync.
 // Zigbee2MQTT reads this value from Basic.swBuildId, so keep it as a plain
 // Semantic Versioning 2.0.0 dotted string.
-static constexpr const char* SOFTWARE_VERSION = "0.2.6";
-static constexpr uint8_t SOFTWARE_APPLICATION_VERSION = 26;
+static constexpr const char* SOFTWARE_VERSION = "0.4.0";
+static constexpr uint8_t SOFTWARE_APPLICATION_VERSION = 40;
 static constexpr const char* ZB_MFR = "TeeVau";
 static constexpr const char* ZB_MODEL = "nfc-garage-position-sensor";
 static constexpr const char* BLE_DEVICE_NAME = "garage-sensor";

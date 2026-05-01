@@ -14,7 +14,7 @@ The implementation lives in `src/nfc-garage-position-sensor/status_led.ino` and 
 | Ready, but no confirmed NFC position yet | Very dim green | Keeps normal idle behavior unobtrusive |
 | Confirmed closed position (`0 %`) | Green | Stable closed indication |
 | Confirmed non-closed position (`> 0 %`) | Orange | First implementation intentionally treats every non-closed state as "not closed" |
-| Fatal startup error | Red blink | Currently triggered by PN532 init failure or Zigbee begin timeout |
+| Fault indication | Red blink | Latched fault indication for startup or hardware errors while keeping diagnostics visible |
 
 ## Why The Startup Window Exists
 

@@ -48,6 +48,12 @@ Important note:
 
 - The converter is intentionally read-only. The device is used as a position sensor even though it reports through the Window Covering cluster.
 
+Important runtime note:
+
+- The firmware actively reports position updates directly to coordinator endpoint `1`.
+- Because of that, live `position` / `state` delivery no longer depends on Zigbee2MQTT having successfully stored endpoint `bindings` or `configured_reportings`.
+- A manual `device/configure` can still improve metadata completeness, but it should no longer be required just to receive live position updates.
+
 ## Firmware-ID And Version Metadata
 
 Zigbee2MQTT distinguishes between multiple version-related Basic-cluster attributes.

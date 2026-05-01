@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-01
+
+### Added
+
+- Final 10-tag on-metal UID layout with the field-tested garage-door mapping
+  `0/11/22/33/44/56/67/78/89/100 %`.
+- Generic capture helpers for short serial and MQTT debug sessions.
+- Versioned local build artifacts under `bin/` for release-oriented firmware
+  packaging.
+
+### Changed
+
+- Promoted the project to the current field-tested release baseline.
+- Simplified the maintenance model back to USB flashing only; the temporary
+  Wi-Fi / HTTP OTA updater path was removed from the firmware and tooling.
+- Refreshed README, Zigbee2MQTT notes, tag-layout documentation, and the FSD
+  to match the final release behavior.
+
+### Fixed
+
+- Zigbee runtime reporting now stays reliable even when Zigbee2MQTT interviews
+  the device successfully but skips the converter `configure()` step.
+- BLE-debug builds now keep the verbose Zigbee neighbor / route diagnostics
+  isolated from standard production builds.
+
 ## [0.2.5] - 2026-04-25
 
 ### Added
