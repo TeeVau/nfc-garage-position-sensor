@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Public maker-facing hardware setup, assembly, BOM, and quick verification documentation.
 - SVG wiring and pinout assets under `docs/assets/`.
+- Field installation photos showing the sensor, wiring, and NFC tag placement.
 - Community repo metadata including issue templates, a pull request template, and contribution/security guidance.
 
 ### Changed

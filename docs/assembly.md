@@ -2,6 +2,16 @@
 
 This guide focuses on the physical installation so the reader sees the tags reliably across the full garage door travel path.
 
+## Reference Photos
+
+![Installed sensor](assets/photos/installation-overview.png)
+
+![Sensor and wiring](assets/photos/sensor-wiring-detail.png)
+
+![NFC tag on the shutter](assets/photos/nfc-tag-closeup.png)
+
+These images document the field-tested installation. They illustrate the intended relationship between the sensor, the roller shutter, and the tags; they are not a requirement to reproduce the exact enclosure or cable route.
+
 ## Installation Goals
 
 - The PN532 should read only the intended nearby tag at each position.

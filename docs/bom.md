@@ -53,6 +53,7 @@ This repo currently does not ship:
 - a PCB design
 - a mandatory enclosure
 - a Fritzing source file
-- release-ready hardware photos
+
+Release-ready field installation photos are available under [`docs/assets/photos/`](./assets/photos/).
 
 The project is designed around straightforward maker wiring rather than a custom board.

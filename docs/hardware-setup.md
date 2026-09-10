@@ -2,6 +2,14 @@
 
 This project was validated with an `ESP32C6 Dev Module` and a `PN532` NFC module in SPI mode.
 
+## Field Installation
+
+![Installation overview](assets/photos/installation-overview.png)
+
+The photos show the tested open-enclosure installation next to the roller garage door. They are a visual reference; enclosure shape, cable routing, and mounting hardware can be adapted to the local installation.
+
+![Sensor close-up](assets/photos/sensor-closeup.png)
+
 ## Known Working Hardware
 
 | Component | Quantity | Notes |
@@ -27,6 +35,8 @@ This project was validated with an `ESP32C6 Dev Module` and a `PN532` NFC module
 ## Wiring Diagram
 
 ![Wiring diagram](assets/nfc-garage-position-sensor-wiring.svg)
+
+![Wiring detail](assets/photos/sensor-wiring-detail.png)
 
 ## Pinout Graphic
 

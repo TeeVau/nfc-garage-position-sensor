@@ -10,7 +10,7 @@ ESP32-C6 firmware for a garage door position sensor that reads fixed PN532 NFC t
 
 Current release: `0.4.0`
 
-![NFC garage position sensor hero](docs/assets/github-social-preview.png)
+![NFC garage position sensor installation](docs/assets/photos/installation-overview.png)
 
 ## Why This Project
 
@@ -37,6 +37,8 @@ The released firmware focuses on a simple maintenance model:
 - jumper wires, USB cable, and a stable mounting solution for board, reader, and tags
 
 See the full parts list in [docs/bom.md](./docs/bom.md) and the detailed wiring guide in [docs/hardware-setup.md](./docs/hardware-setup.md).
+
+The photos in this repository show the field-tested installation and are intended as a visual reference for the enclosure, reader placement, wiring, and tag layout.
 
 ### Software
 
@@ -87,6 +89,16 @@ See the full parts list in [docs/bom.md](./docs/bom.md) and the detailed wiring 
 | `BUTTON_PIN` | `9` |
 
 For wiring details, setup notes, and the diagram assets, see [docs/hardware-setup.md](./docs/hardware-setup.md).
+
+## Installation Photos
+
+![Garage installation overview](docs/assets/photos/installation-overview.png)
+
+![Sensor close-up](docs/assets/photos/sensor-closeup.png)
+
+![Sensor wiring detail](docs/assets/photos/sensor-wiring-detail.png)
+
+![NFC tag close-up](docs/assets/photos/nfc-tag-closeup.png)
 
 ## Firmware Behavior
 
@@ -231,6 +243,10 @@ Short MQTT capture using example placeholder values:
 - [docs/assembly.md](./docs/assembly.md)
 - [docs/bom.md](./docs/bom.md)
 - [docs/quick-verification.md](./docs/quick-verification.md)
+- [docs/assets/photos/installation-overview.png](./docs/assets/photos/installation-overview.png): field installation overview
+- [docs/assets/photos/sensor-closeup.png](./docs/assets/photos/sensor-closeup.png): sensor enclosure detail
+- [docs/assets/photos/sensor-wiring-detail.png](./docs/assets/photos/sensor-wiring-detail.png): wiring detail
+- [docs/assets/photos/nfc-tag-closeup.png](./docs/assets/photos/nfc-tag-closeup.png): NFC tag placement detail
 - [docs/status-led.md](./docs/status-led.md)
 - [docs/tag-layout.md](./docs/tag-layout.md)
 - [docs/z2m-setup.md](./docs/z2m-setup.md)
